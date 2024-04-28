@@ -1,0 +1,33 @@
+# Dependency directories
+node_modules/
+
+# Optional: if using npm, you can ignore the lock file
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Optional: OS or editor specific files
+.DS_Store
+Thumbs.db
+
+# Output of build tools
+/build
+/out
+
+# Optional: log files
+*.log
+
+# IDE files
+.idea/
+.vscode/
+In this .gitignore file:
+
+node_modules/ ignores the directory where your project dependencies are installed.
+npm-debug.log, yarn-error.log, package-lock.json, and yarn.lock are related to package management and should be ignored.
+.env is used to store environment variables and should not be version controlled.
+.DS_Store and Thumbs.db are system-specific files created by macOS and Windows respectively.
+/build and /out ignore directories where build output might be generated.
+*.log ignores log files.
+.idea/ and .vscode/ ignore IDE-specific directories.
+You can customize this file based on your specific project requirements. Create a new file called `.
