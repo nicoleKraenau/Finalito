@@ -59,35 +59,48 @@ export default function Correo(){
         const handleSubmit = async (e) => {
           e.preventDefault();
           try {
-              if(contrasena === repcontrasena)
-              {
-                const response = await fetch(process.env.REACT_APP_API_URL +'/usuario', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', },
-                body: JSON.stringify({correo, contrasena}),
-                });
-        
-                if (response.ok) {
-                  // Autenticación exitosa, puedes redirigir al usuario o realizar otras acciones.
-                  setAlert('Datos cambiados');
+              if (contrasena === repcontrasena) {
+                  // Verificar longitud de la contraseña
+                  if (contrasena.length < 8) {
+                      setAlert('La contraseña debe tener al menos 8 caracteres.');
+                      handleOpen();
+                      return;
+                  }
+      
+                  // Verificar caracteres especiales
+                  const specialChars = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
+                  if (!specialChars.test(contrasena)) {
+                      setAlert('La contraseña debe contener al menos un carácter especial.');
+                      handleOpen();
+                      return;
+                  }
+      
+                  const response = await fetch(process.env.REACT_APP_API_URL + '/usuario', {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ correo, contrasena }),
+                  });
+      
+                  if (response.ok) {
+                      // Autenticación exitosa, puedes redirigir al usuario o realizar otras acciones.
+                      setAlert('Datos cambiados');
+                      handleOpen();
+                      navigate('/login');
+                  } else {
+                      // Autenticación fallida, puedes mostrar un mensaje de error.
+                      setAlert('Error de actualizacion.');
+                      handleOpen();
+                  }
+              } else {
+                  setAlert('Las contraseñas no son iguales, intente de nuevo.');
                   handleOpen();
-                  navigate('/login');
-
-                } else {
-                  // Autenticación fallida, puedes mostrar un mensaje de error.
-                  setAlert('Error de actualizacion.');
-                  handleOpen();
-                }
               }
-              else{
-                setAlert('Las contraseñas no son iguales, intente de nuevo.');
-                handleOpen();
-              }
-              
+      
           } catch (error) {
-            console.error('Error al enviar la solicitud:', error);
+              console.error('Error al enviar la solicitud:', error);
           }
-        };
+      };
+      
       
         const action = (
           <React.Fragment>

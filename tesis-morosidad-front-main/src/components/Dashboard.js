@@ -1,10 +1,12 @@
 import Navbar from './Navbar'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import {Typography, Button, Grid,Table,TableBody,TableContainer,TableHead,TableRow,Paper,Container, ListItem, ListItemText, List, Collapse, ListItemButton} from "@mui/material";
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import DensityMediumSharpIcon from '@mui/icons-material/DensityMediumSharp';
 import { styled } from '@mui/material/styles';
 import CardsHeader from './CardsHeader';
+import {Spinner} from 'reactstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
 
@@ -45,15 +47,15 @@ export default function Dashboard(){
     const [datacountClientsDistrito, setCountDistrito] = useState([]);   
     const [datacountClientsRegion, setCountRegion] = useState([]); 
     const [distrito, setDistrito] = useState("");
+ 
     const [region, setRegion] = useState("");
-
-    const [openList, setOpenList] = useState(false);
-    
+    const [openList, setOpenList] = useState(false);    
     const [openList2, setOpenList2] = useState(false);
     const [top5clientes,setTopClientes] = useState([]);
-  
+    const [dataactualizada,setDataActualizada] = useState(0);
+    const [showComponentA, setShowComponentA] = useState(true);
+    const [userId, setUserId] = useState('');
     const handleToggle = () => {setOpenList(!openList);};
-
     const handleToggle2 = () => {setOpenList2(!openList2);};
 
     const PieEducativo =() => (
@@ -378,6 +380,8 @@ export default function Dashboard(){
           setDataNivelEducativo(dataNivelEducativo);
           setDataMotivo(dataMotivo);
 
+          console.log("datos cargados de loadData");
+
           if (
             dataRegion.length > 0 &&
             dataDistrito.length > 0 &&
@@ -389,6 +393,7 @@ export default function Dashboard(){
             fillDashboard();
             loadClientes();
             setDataLoaded(true);
+            console.log(datacountClientsDistrito,'ggg')
           }
            
         } catch (error) {
@@ -398,7 +403,12 @@ export default function Dashboard(){
   
       // Usa useEffect para cargar los datos cuando el componente se monta
       useEffect(() => {
-          loadData();   
+        const userIdFromStorage = localStorage.getItem('id_usuario');
+          console.log("carga la app");
+          loadData();
+          if (userIdFromStorage) {
+            setUserId(userIdFromStorage);
+          }
       },[dataLoaded]);
 
 
@@ -433,6 +443,7 @@ export default function Dashboard(){
     }
 
     const fillDashboard = async() => {
+      
       
       let allDistritos = [];
   
@@ -471,7 +482,7 @@ export default function Dashboard(){
       const data2 = await Promise.all(dataEstadoCivil.map(async (e) => {
         const id = e.tipo_de_estado;
         const label = e.tipo_de_estado;
-        const value = await countClientsbyEstadoCivil(e.id_estado_civil);
+        const value = await countClientsbyEstadoCivil(e.id_estadocivil);
         const color = getRandomColor();
         return { id, label, value, color };
       }));
@@ -481,7 +492,7 @@ export default function Dashboard(){
       const data3 = await Promise.all(dataMotivo.map(async (e) => {
         const id = e.motivo;
         const label = e.motivo;
-        const value = await countClientsbyMotivo(e.id_motivo_prestamo);
+        const value = await countClientsbyMotivo(e.id_motivo);
         const color = getRandomColor();
         return { id, label, value, color };
       }));
@@ -491,7 +502,7 @@ export default function Dashboard(){
       const data4 = await Promise.all(dataNivelEducativo.map(async (e) => {
         const id = e.nivel_educativo;
         const label = e.nivel_educativo;
-        const value = await countClientsbyEducativo(e.id_nivel_educativo);
+        const value = await countClientsbyEducativo(e.id_niveleducativo);
         const color = getRandomColor();
         return { id, label, value, color };
       }));
@@ -507,60 +518,94 @@ export default function Dashboard(){
       }));
       const filteredData5 = data5.filter((item) => item.value > 0);
       setCountRegion(filteredData5);
+      setDataActualizada(dataactualizada);
+      console.log("datos cargados de fillDashboard");
+      console.log(dataactualizada,filteredData5,data5,'0000000000000000000000000000000000000')
     }
 
     const filtropordistrito = async (ident) => {
-      setDistrito(dataDistrito[ident-1].nombre_distrito);
-
+      console.log('nicoleaca', ident, dataDistrito)
+      setShowComponentA(true);
+      // Función para cambiar el estado después de un tiempo
+      setTimeout(() => {
+          setShowComponentA(false); // Cambiar el estado después de unos segundos
+      }, 2000); // 3000 milisegundos = 3 segundos
+      const distrito = dataDistrito.find(distrito => distrito.id_distrito === ident);
+      console.log(distrito)
+      setDistrito(distrito.nombre_distrito);
+      console.log(distrito, 'iiiiiiiiiiiiiii');
+      localStorage.setItem("region", distrito.nombre_distrito);
+  
       const data = await Promise.all(dataDistrito.map(async (e) => {
-        const id = e.nombre_distrito;
-        const label = e.nombre_distrito;
-        const region = e.id_region;
-        const value = await countClientsbyDistrito(e.id_distrito);
-        const color = getRandomColor();
-        if(e.id_distrito === ident) {return { id, label, value, color, region };}
+          if (e.nombre_distrito) { // Verifica si nombre_distrito está definido
+              const id = e.nombre_distrito;
+              const label = e.nombre_distrito;
+              const region = e.id_region;
+              const value = await countClientsbyDistrito(e.id_distrito);
+              const color = getRandomColor();
+              if (e.id_distrito === ident) {
+                  return { id, label, value, color, region };
+              }
+          }
       }));
       const filteredData = data.filter((item) => item !== undefined);
-      setCountDistrito(filteredData);
-
+  
+      console.log(filteredData, 'gggggggggggggg')
+  
       const data2 = await Promise.all(dataEstadoCivil.map(async (e) => {
-        const id = e.tipo_de_estado;
-        const label = e.tipo_de_estado;
-        const value = await countClientsbyEstadoCivilDistrito(e.id_estado_civil, ident);
-        const color = getRandomColor();
-        return { id, label, value, color };
+          const id = e.tipo_de_estado;
+          const label = e.tipo_de_estado;
+          const value = await countClientsbyEstadoCivilDistrito(e.id_estadocivil, ident);
+          const color = getRandomColor();
+          return { id, label, value, color };
       }));
       setCountEstadoCivil(data2);
-
+  
       const data3 = await Promise.all(dataMotivo.map(async (e) => {
-        const id = e.motivo;
-        const label = e.motivo;
-        const value = await countClientsbyMotivoDistrito(e.id_motivo_prestamo, ident);
-        const color = getRandomColor();
-        return { id, label, value, color };
+          const id = e.motivo;
+          const label = e.motivo;
+          const value = await countClientsbyMotivoDistrito(e.id_motivo, ident);
+          const color = getRandomColor();
+          return { id, label, value, color };
       }));
       setCountMotivo(data3);
-
+  
       const data4 = await Promise.all(dataNivelEducativo.map(async (e) => {
-        const id = e.nivel_educativo;
-        const label = e.nivel_educativo;
-        const value = await countClientsbyEducativoDistrito(e.id_nivel_educativo, ident);
-        const color = getRandomColor();
-        return { id, label, value, color };
+          const id = e.nivel_educativo;
+          const label = e.nivel_educativo;
+          const value = await countClientsbyEducativoDistrito(e.id_niveleducativo, ident);
+          const color = getRandomColor();
+          return { id, label, value, color };
       }));
       setCountNivelEducativo(data4);
-
-      const data5 =  await countAllClientsbyDistrito(ident);
+  
+      const data5 = await countAllClientsbyDistrito(ident);
       setClientes(data5);
-      const dataordenada = data5.sort((a, b) => b.deudas - a.deudas);
-      setTopClientes(dataordenada.slice(0, 5));
-    }
-
+  
+      // Verifica si data5 es un array antes de intentar usar el método sort()
+      if (Array.isArray(data5)) {
+          const dataordenada = data5.sort((a, b) => b.deudas - a.deudas);
+          setTopClientes(dataordenada.slice(0, 5));
+          console.log(dataordenada, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+          console.log(datacountClientsDistrito.length,'000000000000000000000000000000',datacountClientsDistrito)
+      } else {
+          // Manejar el caso en el que data5 no es un array
+          console.error('Error: data5 no es un array');
+          console.log(datacountClientsRegion.length,'000000000000000000000000000000',datacountClientsRegion)
+      }
+  }
+  
     const filtroporregion = async (ident) => {
+      setShowComponentA(true);
+      // Función para cambiar el estado después de un tiempo
+        setTimeout(() => {
+          setShowComponentA(false); // Cambiar el estado después de unos segundos
+        }, 2000); // 3000 milisegundos = 3 segundos
+      
       setRegion(dataRegion[ident-1].nombre_region);
       localStorage.setItem("region", dataRegion[ident-1].nombre_region);
 
-      const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + '/distritosporregion/' + ident);
+      const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + '/distritosporregion/' + ident+ "/"+userId);
       const distritos = await responseDistritobyRegion.json()
       setDataDistrito(distritos);
 
@@ -577,7 +622,7 @@ export default function Dashboard(){
       const data2 = await Promise.all(dataEstadoCivil.map(async (e) => {
         const id = e.tipo_de_estado;
         const label = e.tipo_de_estado;
-        const value = await countClientsbyEstadoCivilRegion(e.id_estado_civil, ident);
+        const value = await countClientsbyEstadoCivilRegion(e.id_estadocivil, ident);
         const color = getRandomColor();
         return { id, label, value, color };
       }));
@@ -587,7 +632,7 @@ export default function Dashboard(){
       const data3 = await Promise.all(dataMotivo.map(async (e) => {
         const id = e.motivo;
         const label = e.motivo;
-        const value = await countClientsbyMotivoRegion(e.id_motivo_prestamo, ident);
+        const value = await countClientsbyMotivoRegion(e.id_motivo, ident);
         const color = getRandomColor();
         return { id, label, value, color };
       }));
@@ -597,7 +642,7 @@ export default function Dashboard(){
       const data4 = await Promise.all(dataNivelEducativo.map(async (e) => {
         const id = e.nivel_educativo;
         const label = e.nivel_educativo;
-        const value = await countClientsbyEducativoRegion(e.id_nivel_educativo, ident);
+        const value = await countClientsbyEducativoRegion(e.id_niveleducativo, ident);
         const color = getRandomColor();
         return { id, label, value, color };
       }));
@@ -613,176 +658,157 @@ export default function Dashboard(){
       }));
       const filteredData4 = data5.filter((item) => item.id === ident);
       setCountRegion(filteredData4);
-
+console.log(filteredData4,'tttttttttttttttttttttttt')
       const data6 =  await countAllClientsbyRegion(ident);
       setClientes(data6);
       const dataordenada = data6.sort((a, b) => b.deudas - a.deudas);
       setTopClientes(dataordenada.slice(0, 5));
+
+      console.log(dataordenada,data5,data6,'555555555555555')
     }
 
     const countClientsbyRegion = async (id) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporregion/" + id);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporregion/" + id+"/"+ userId);
       return await valor.json();
     }
 
     const countAllClientsbyRegion = async (id) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/allclientesporregion/" + id);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/allclientesporregion/" + id +"/"+ userId);
       return await valor.json();
     }
 
     const countClientsbyDistrito = async (id) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientespordistrito/" + id);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientespordistrito/" + id+"/"+ userId);
       return await valor.json();
     }
 
     const countAllClientsbyDistrito = async (id) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/allclientespordistrito/" + id);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/allclientespordistrito/" + id+"/"+ userId);
       return await valor.json();
     }
 
     const countClientsbyEstadoCivil = async (id) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporestadocivil/" + id);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporestadocivil/" + id+"/"+ userId);
       return await valor.json();
     }
 
     const countClientsbyEstadoCivilDistrito = async (id, distrito) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporestadocivildistrito/" + id + "/" + distrito);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporestadocivildistrito/" + id + "/" + distrito+ "/" + userId);
       return await valor.json();
     }
 
     const countClientsbyEstadoCivilRegion = async (id, region) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporestadocivilregion/" + id + "/" + region);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporestadocivilregion/" + id + "/" + region+ "/" + userId);
       return await valor.json();
     }
 
     const countClientsbyMotivo = async (id) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientespormotivo/" + id);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientespormotivo/" + id+"/"+ userId);
       return await valor.json();
     }
 
     const countClientsbyMotivoDistrito = async (id, distrito) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientespormotivodistrito/" + id + "/" + distrito);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientespormotivodistrito/" + id + "/" + distrito+ "/" + userId);
       return await valor.json();
     }
 
     const countClientsbyMotivoRegion = async (id, region) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientespormotivoregion/" + id + "/" + region);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientespormotivoregion/" + id + "/" + region+ "/" + userId);
       return await valor.json();
     }
 
     const countClientsbyEducativo = async (id) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporeducativo/" + id);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporeducativo/" + id +"/"+ userId);
       return await valor.json();
     }
 
     const countClientsbyEducativoDistrito = async (id, distrito) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporeducativodistrito/" + id + "/" + distrito);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporeducativodistrito/" + id + "/" + distrito+ "/" + userId);
       return await valor.json();
     }
 
     const countClientsbyEducativoRegion = async (id, region) => {
-      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporeducativoregion/" + id + "/" + region);
+      const valor = await fetch(process.env.REACT_APP_API_URL + "/clientesporeducativoregion/" + id + "/" + region+ "/" + userId);
       return await valor.json();
     }
     
     const loadClientes = async () => {
-      const response = await fetch(process.env.REACT_APP_API_URL + '/clientes');
+      const response =  await fetch(`http://localhost:4000/api/clientes/${userId}`)
       const data = await response.json();
-      
-      // Filtrar los clientes con edad mayor a 27
-      const filteredClientes = data.filter(cliente => {
-        const edad = calcularEdad(cliente.fecha_nacimiento);
-        return edad < 107;
-      });
-    
-      // Establecer los datos filtrados
-      setClientes(filteredClientes);
-    
-      // Asegurarse de obtener los top 5 clientes
-      const dataOrdenada = filteredClientes.sort((a, b) => b.deudas - a.deudas);
-      setTopClientes(dataOrdenada.slice(0, 5));
+      setClientes(data);
+      const dataordenada = data.sort((a, b) => b.deudas - a.deudas);
+      setTopClientes(dataordenada.slice(0, 5));
+      console.log("datos cargados de loadClientes");
+      console.log(userId)
+      console.log(data)
     }
 
     const edadPromedio = () => {
-      let edadSumada = 0;
-  let clientesMenores27 = clientes.filter((e) => {
-    const edad = calcularEdad(e.fecha_nacimiento);
-    return edad < 27;
-  });
-
-  if (clientesMenores27.length > 0) {
-    clientesMenores27.forEach((e) => {
-      edadSumada += calcularEdad(e.fecha_nacimiento);
-    });
-
-    const promedio = edadSumada / clientesMenores27.length;
-    return promedio.toFixed(0) + " años";
-  } else {
-    return "No hay datos";
+      let edadsumada = 0;
+      // Verificar que clientes sea un array antes de usar map
+      if (Array.isArray(clientes)) {
+        clientes.map((e) => { edadsumada = edadsumada + calcularEdad(e.fecha_nacimiento); });
+        const promedio = edadsumada / clientes.length;
+        if (promedio) {
+          return promedio.toFixed(0) + " años";
+        } else {
+          return "No hay datos";
+        }
+      } else {
+        return "No hay datos";
       }
     }
-    const clientesMenores27YMenos2Propiedades = () => {
-      let countClientes = 0;
+    const morosos = () => {
+      if (!Array.isArray(clientes)) {
+        return "No hay datos";
+      }
     
-      clientes.forEach((cliente) => {
-        const edad = calcularEdad(cliente.fecha_nacimiento);
-       
-          countClientes++;
-        
+      // Filtrar los clientes que tienen más de 27 años
+      const morosos = clientes.filter((cliente) => {
+        return calcularEdad(cliente.fecha_nacimiento) < 27;
       });
     
-      return countClientes;
+      // Devolver el número de clientes que cumplen con el criterio
+      return morosos.length;
     };
-    const salarioPromedio = () => {
-      let salarioSumado = 0;
-  let clientesMenores27 = clientes.filter((e) => {
-    const edad = calcularEdad(e.fecha_nacimiento);
-    return edad < 27;
-  });
-
-  if (clientesMenores27.length > 0) {
-    clientesMenores27.forEach((e) => {
-      salarioSumado += e.salario;
-    });
-
-    const promedio = salarioSumado / clientesMenores27.length;
-    return 'S/. ' + promedio.toFixed(2);
-  } else {
-    return "No hay datos";
+    const nomorosos = () => {
+      if (!Array.isArray(clientes)) {
+        return "No hay datos";
       }
-    }
+    
+      // Filtrar los clientes que tienen más de 27 años
+      const morosos = clientes.filter((cliente) => {
+        return calcularEdad(cliente.fecha_nacimiento) > 27;
+      });
+    
+      // Devolver el número de clientes que cumplen con el criterio
+      return morosos.length;
+    };
+    
+    const filteredClients = top5clientes.filter(cliente => {
+      const clienteFechaNacimiento = new Date(cliente.fecha_nacimiento);
+      const clienteEdad = Math.floor((new Date() - clienteFechaNacimiento) / 31557600000); // Calcula la edad en años
+      return clienteEdad < 27 && cliente.deudas > 0;
+    });
+  
 
     const restablecer = () => {
-      if(distrito !== ""){
-        setDistrito("");
-      }
-      if(region !== ""){
-        setRegion("");
+      if(distrito !== ""){ setDistrito("");}
+      if(region !== ""){setRegion("");
         localStorage.setItem("region", "");
-        setDistrito("");        
-      }
-      if(openList){
-        handleToggle();
-      }
-      if(openList2){
-        handleToggle2();
-      }
+        setDistrito("");}
+      if(openList){handleToggle();}
+      if(openList2){handleToggle2();}
+      console.log("hora de restablecer");
       fillDashboard();
       loadClientes();
     }
-   
-    const clientesMayoresA27 = () => {
-      let countClientes = 0;
-    
-      clientes.forEach((cliente) => {
-        const edad = calcularEdad(cliente.fecha_nacimiento);
-       
-          countClientes++;
-        
-      });
-    
-      return countClientes;
-    };
+
+    // Función para cambiar el estado después de un tiempo
+    setTimeout(() => {
+      setShowComponentA(false); // Cambiar el estado después de unos segundos
+    }, 2000); // 3000 milisegundos = 3 segundos
+
     return (dataLoaded && (
         <>
           <Navbar/>
@@ -795,33 +821,61 @@ export default function Dashboard(){
                 <Grid container>
                   <Grid item xs={12} md={6} sx={{height: 400, marginBottom:'2rem'}}>
                     <Typography variant="h6" sx={{marginBottom:'.5rem', textAlign:'center', fontWeight:'bold'}}>Región con mayor número de morosos</Typography>               
-                    {datacountClientsRegion.length > 0
+                    {showComponentA
+                    ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
+                    : <Fragment>
+                      {datacountClientsDistrito.length > 0
                       ? <BarRegion/>
                       : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
+                      <p>{datacountClientsDistrito.length}</p>
+      
+                      </Fragment>
+                    }
                   </Grid>
                   <Grid item xs={12} md={6} sx={{height: 400,  marginBottom:'2rem'}}>
                     <Typography variant="h6" sx={{marginBottom:'.5rem', textAlign:'center', fontWeight:'bold'}}>Distrito con mayor número de morosos</Typography>              
-                    {datacountClientsDistrito.length > 0 
+                    {showComponentA
+                    ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
+                    : <Fragment>
+                      {datacountClientsDistrito.length > 0
                       ? <BarDistrito/>
-                      : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}                   
+                      : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
+                      </Fragment>
+                    }                   
                   </Grid>
                   <Grid item xs={12} md={6} sx={{height: 400,  marginBottom:'2rem'  }}>
                     <Typography variant="h6" sx={{marginTop:'.5rem', textAlign:'center', fontWeight:'bold'}}>Estado civil</Typography>
-                    {datacountClientsEstadoCivil.length > 0 
-                      ? <PieEstadoCivil/> 
-                      : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}                          
+                    {showComponentA
+                    ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
+                    : <Fragment>
+                      {datacountClientsDistrito.length > 0
+                      ? <PieEstadoCivil/>
+                      : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
+                      
+                      </Fragment>
+                    }                          
                   </Grid>
                   <Grid item xs={12} md={6} sx={{height: 400,  marginBottom:'2rem'  }}>
                     <Typography variant="h6" sx={{marginTop:'.5rem', textAlign:'center', fontWeight:'bold'}}>Nivel educacional</Typography>                  
-                    {datacountClientsNivelEducativo.length > 0 
-                      ? <PieEducativo/> 
+                    {showComponentA
+                    ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
+                    : <Fragment>
+                      {datacountClientsDistrito.length > 0
+                      ? <PieEducativo/>
                       : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
+                      </Fragment>
+                    }
                   </Grid>          
                   <Grid item xs={12} sx={{height: 400,  marginBottom:'2rem'  }}>
                     <Typography variant="h6" sx={{marginTop:'.5rem', textAlign:'center', fontWeight:'bold'}}>Motivos recurrentes</Typography>
-                    {datacountClientsMotivo.length> 0
+                    {showComponentA
+                    ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
+                    : <Fragment>
+                      {datacountClientsDistrito.length > 0
                       ? <PieMotivo/>
                       : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
+                      </Fragment>
+                    }
                   </Grid>              
                   <Grid item xs={12} md={6}>
                     <Typography variant="h6" sx={{marginTop:'.5rem', textAlign:'center', fontWeight:'bold'}}>Top 5 clientes con más deudas</Typography>
@@ -835,21 +889,22 @@ export default function Dashboard(){
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {top5clientes.length>0
-                            ?(top5clientes.map((cliente) => {
-                              if(cliente.deudas>0) return (
-                                <StyledTableRow key={cliente.id_cliente}>
-                                  <StyledTableCell component="th" scope="row"> {cliente.dni} </StyledTableCell>
-                                  <StyledTableCell >{cliente.nombre_cliente}</StyledTableCell>
-                                  <StyledTableCell >{cliente.deudas}</StyledTableCell>
-                                </StyledTableRow>
-                              )}))
-                              
-                            : (<StyledTableCell colSpan={3}>
-                                <Typography  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '25vh',}}>No hay datos</Typography>
-                              </StyledTableCell>                       
-                          )}
-                        </TableBody>
+    {filteredClients.length > 0 ? (
+      filteredClients.map(cliente => (
+        <StyledTableRow key={cliente.id_cliente}>
+          <StyledTableCell component="th" scope="row">{cliente.dni}</StyledTableCell>
+          <StyledTableCell>{cliente.nombre_cliente}</StyledTableCell>
+          <StyledTableCell>{cliente.deudas}</StyledTableCell>
+        </StyledTableRow>
+      ))
+    ) : (
+      <StyledTableRow>
+        <StyledTableCell colSpan={3}>
+          <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '25vh' }}>No hay datos</Typography>
+        </StyledTableCell>
+      </StyledTableRow>
+    )}
+  </TableBody>
                       </Table>
                     </TableContainer>
                   </Grid>
@@ -859,13 +914,13 @@ export default function Dashboard(){
                         <CardsHeader titulo="Edad Promedio" texto={edadPromedio()} color="#F85032" font="white"/>
                       </Grid>
                       <Grid item xs={12} md={6}>
-                        <CardsHeader titulo="Salario Promedio" texto={salarioPromedio()} color="#F85032" font="white"/>
+                      
                       </Grid>
                       <Grid item xs={12} md={6}>
-                        <CardsHeader titulo="Clientes morosos" texto={clientesMenores27YMenos2Propiedades()} color="#F85032" font="white"/>
+                        <CardsHeader titulo="Clientes morosos" texto={morosos()} color="#F85032" font="white"/>
                       </Grid>
                       <Grid item xs={12} md={6}>
-                        <CardsHeader titulo="Clientes no morosos" texto={clientesMayoresA27()} color="#F85032" font="white"/>
+                        <CardsHeader titulo="Clientes no morosos" texto={nomorosos()}  color="#F85032" font="white"/>
                       </Grid>
                     </Grid>
                   </Grid>
@@ -878,7 +933,7 @@ export default function Dashboard(){
                         <Paper>
                           <List>
                             {dataRegion.map((d) =>(
-                              <ListItem>
+                              <ListItem key={d.id_region}>
                                 <ListItemButton onClick={() => filtroporregion(d.id_region)}>
                                 {d.nombre_region === region 
                                   ? <ListItemText primary={<span style={{ fontWeight: 'bold' }}>{d.nombre_region}</span>}/> 
@@ -900,7 +955,8 @@ export default function Dashboard(){
                         <Paper>
                           <List>
                             {dataDistrito.map((d) =>(
-                              <ListItem>
+                              
+                              <ListItem key={d.id_distrito}>
                                 <ListItemButton onClick={() => filtropordistrito(d.id_distrito)}>
                                 {d.nombre_distrito === distrito 
                                   ? <ListItemText primary={<span style={{ fontWeight: 'bold' }}>{d.nombre_distrito}</span>}/> 

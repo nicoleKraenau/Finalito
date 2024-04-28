@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useId } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import{ Container, TextField,Button, Grid, Typography, Snackbar, IconButton, ToggleButtonGroup, ToggleButton} from "@mui/material";
 import Autocomplete from '@mui/material/Autocomplete';
@@ -8,34 +8,34 @@ import { useContext } from "react";
 import { StoreContext } from "./StoreProvider";
 
 export default function NuevoCliente() {
-   // Define las variables de estado para los datos
-   const [dataLoaded, setDataLoaded] = useState(false);
-   const [alert, setAlert] = useState('');
-   const [dataDistrito, setDataDistrito] = useState([]);
-   const [dataUsuario, setDataUsuario] = useState([]);
-   const [dataEstadoCivil, setDataEstadoCivil] = useState([]);
-   const [dataNivelEducativo, setDataNivelEducativo] = useState([]);
-   const [dataRegion, setDataRegion] = useState([]);
-   const [dataMotivo, setDataMotivo] = useState([]);
-   const [dataClientes, setClientes] = useState([]);
-   const [store, dispatch] = useContext (StoreContext)
-	 const { user } = store;
-
-   const [task, setTask] = useState({
-    nombre_cliente: "",
-    dni: "",
-    fecha_nacimiento: "",
-    cantidad_propiedades: "",
-    cantidad_hijos: "",
-    genero: true,
-    id_distrito: null,
-    id_usuario: null,
-    id_estadocivil: null,
-    id_niveleducativo: null,
-    salario: null,
-    deudas: null,
-    id_motivo: null,
-  });
+  // Define las variables de estado para los datos
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [alert, setAlert] = useState('');
+  const [dataDistrito, setDataDistrito] = useState([]);
+  const [dataUsuario, setDataUsuario] = useState([]);
+  const [dataEstadoCivil, setDataEstadoCivil] = useState([]);
+  const [dataNivelEducativo, setDataNivelEducativo] = useState([]);
+  const [dataRegion, setDataRegion] = useState([]);
+  const [dataMotivo, setDataMotivo] = useState([]);
+  const [dataClientes, setClientes] = useState([]);
+  const [store, dispatch] = useContext (StoreContext)
+  const { user } = store;
+  const [userId, setUserId] = useState('');
+  const [task, setTask] = useState({
+   nombre_cliente: "",
+   dni: "",
+   fecha_nacimiento: "",
+   cantidad_propiedades: "",
+   cantidad_hijos: "",
+   genero: true,
+   id_distrito: null,
+   id_usuario: userId,
+   id_estadocivil: null,
+   id_niveleducativo: null,
+   salario: null,
+   deudas: null,
+   id_motivo: null,
+ });
 
    const [editing, setEditing] = useState(false);
    const [loading, setLoading] = useState(false);
@@ -72,8 +72,9 @@ export default function NuevoCliente() {
             task.genero = false;
           }
         };
-
+        console.log(user.id )
    const loadData = async () => {
+    console.log('hhhhhhhhhhhhhhhhh')
     try {
       // Carga los datos de distrito
       const regionPromise = await fetch(process.env.REACT_APP_API_URL + '/region') // Reemplaza con la ruta correcta
@@ -111,11 +112,12 @@ export default function NuevoCliente() {
         .catch((error) => console.error('Error al cargar datos de motivo:', error));
 
       // Carga los datos de los clientes
-      const clientePromise = fetch(process.env.REACT_APP_API_URL + '/clientes') // Reemplaza con la ruta correcta
+      const clientePromise = fetch(`http://localhost:4000/api/clientes/${userId}`) // Reemplaza con la ruta correcta
        .then((response) => response.json())
        .then((data) => setClientes(data))
        .catch((error) => console.error('Error al cargar datos de los clientes:', error));
-      
+      console.log(dataClientes)
+
       await Promise.all([regionPromise,distritoPromise,usuarioPromise, estadoPromise, nivelPromise, motivoPromise, clientePromise]);
 
       if(dataRegion && dataDistrito && dataUsuario && dataEstadoCivil && dataNivelEducativo && dataMotivo && dataClientes) {
@@ -125,14 +127,17 @@ export default function NuevoCliente() {
       console.error('Error al cargar datos:', error);
     }
   }
-
+  console.log(dataUsuario ,'uuuuuuuuuuuuuu')
+  console.log(dataEstadoCivil ,'uuuuuuuuuuuuuu',)
+  console.log(dataClientes ,'uuuuuuuuuuuuuu',)
   const loadTask = async (id) => {
+    console.log('444444444444444444444')
     try {
       if (!dataDistrito || !dataUsuario || !dataEstadoCivil || !dataNivelEducativo || !dataRegion || !dataMotivo) {
         await new Promise((resolve) => setTimeout(resolve, 100)); // Espera 100ms y vuelve a verificar
       }
-      
-      const res = await fetch(process.env.REACT_APP_API_URL + "/cliente/" + id);
+      console.log('Antes de la solicitud fetch');
+      const res = await fetch(`http://localhost:4000/api/cliente/${id}`);
       const data = await res.json();      
 
       // Crear un objeto de fecha a partir de la cadena
@@ -152,27 +157,37 @@ export default function NuevoCliente() {
       } else{
         dia = fecha.getDate();
       }
+      console.log('yyyyyyyyyyyyyyyyyy2')
       const distrito = dataDistrito.find((item) => item.id_distrito === data.id_distrito);
-      const motivo = dataMotivo.find((item) => item.id_motivo_prestamo === data.id_motivo);
+      const motivo = dataMotivo.find((item) => item.id_motivo === data.id_motivo);
       const usuario = dataUsuario.find((item) => item.id_usuario === data.id_usuario);
-      const estadocivil = dataEstadoCivil.find((item) => item.id_estado_civil === data.id_estadocivil);
-      const niveleducativo = dataNivelEducativo.find((item) =>item.id_nivel_educativo === data.id_niveleducativo);
+      
+      const estadocivil = dataEstadoCivil.find((item) => item.id_estadocivil === data.id_estadocivil);
+      const niveleducativo = dataNivelEducativo.find((item) =>item.id_niveleducativo === data.id_niveleducativo);
+      console.log(user.id )
+
       setTask({
         nombre_cliente: data.nombre_cliente,
-        dni: data.dni,
+        dni: data.dni ,
         fecha_nacimiento: anio + "-" + mes + "-" + dia,
         cantidad_propiedades: data.cantidad_propiedades,
         cantidad_hijos: data.cantidad_hijos,
         genero: data.genero,
         id_distrito: distrito || "",
-        id_usuario: usuario || "",
+        id_usuario:usuario,
         id_estadocivil: estadocivil || "",
         id_niveleducativo: niveleducativo || "",
         salario: data.salario,
         deudas: data.deudas,
         id_motivo: motivo || "",
       });
+      const updatedTask = { 
+        ...task, 
+        id_usuario: { id_usuario: userId } 
+      };
       setAlignment(String(data.genero));
+      console.log(setTask,'33333333333333333333333333333333333')
+      console.log(motivo, setTask)
       setEditing(true);
     } catch (error) {
       console.error("Error al cargar el cliente:", error);
@@ -181,18 +196,27 @@ export default function NuevoCliente() {
 
     // Usa useEffect para cargar los datos cuando el componente se monta
     useEffect(() => {
-      if(location.pathname==='/agregarcliente'){
+      const userIdFromStorage = localStorage.getItem('id_usuario');
+    
+      if (location.pathname === '/agregarcliente') {
         loadData();
-      }else{
+      } else {
         if (params.id) {
           loadData();
+          
           if (dataLoaded) {
             loadTask(params.id);
           }
         }
+        
       }
-      
+    
+      // Asignar el ID de usuario al estado si está disponible en el almacenamiento local
+      if (userIdFromStorage) {
+        setUserId(userIdFromStorage);
+      }
     }, [params.id, dataLoaded]);
+    
 
     function calcularEdad(fechaNacimiento) {
       const fechaNacimientoArray = fechaNacimiento.split('-');
@@ -236,60 +260,143 @@ export default function NuevoCliente() {
   };
 
   const handleSubmit = async (e) => {
+    console.log("SEEEEEEEEEEEEEEEE")
+    const updatedTask = { ...task, id_usuario: userId };
     e.preventDefault();
     setLoading(true);
-    const dniDuplicado = dataClientes.some((e) => e.dni ===task.dni);
+  
+    const dniDuplicado = dataClientes.some((cliente) => {
+      if (editing && params.id === cliente.id) {
+        // Skip the current client being edited
+        return false;
+      }
+      return cliente.dni === task.dni && cliente.id !== userId; // Check if DNI exists for another client
+    });
+  
     const edad = calcularEdad(task.fecha_nacimiento);
-    if(task.dni.length !== 8){
-      setAlert("El DNI no es de 8 dígitos. Intente de nuevo"); handleOpen();
-    }
-    else if(edad<18){
-      setAlert("El cliente es menor de edad. Intente de nuevo."); handleOpen();
-    }
-    else{    
+  
+    if (task.dni.length !== 8) {
+      setAlert("El DNI no es de 8 dígitos. Intente de nuevo");
+      handleOpen();
+    } else if (edad < 18) {
+      setAlert("El cliente es menor de edad. Intente de nuevo.");
+      handleOpen();
+    } else if (!editing && dniDuplicado) { // Check if adding a new client and DNI already exists for another client
+      setAlert("El DNI ya se ha registrado. Intente de nuevo.");
+      handleOpen();
+    } else {
       try {
-        if(editing){
-          const response = await fetch(`http://localhost:4000/cliente/${params.id}`, {
-              method:'PUT',
-              headers:{'Content-Type': 'application/json'},
-              body: JSON.stringify(task)
-            })
+        if (editing) {
+          const response = await fetch(`http://localhost:4000/api/cliente/${params.id}`, {
+            method:'PUT',
+            headers:{'Content-Type': 'application/json'},
+            body: JSON.stringify(task)
+          });
+  
           if (response.ok) {
-            // Éxito: redirecciona o realiza cualquier acción deseada
             navigate('/registro');
           } else {
-            // Manejar errores aquí si es necesario
-            console.error("Error al crear el cliente");
+            console.error("Error al actualizar el cliente");
           }
-        }else{          
-          const updatedTask = { ...task};
-          updatedTask.id_usuario = dataUsuario.find((item) => item.id_usuario === user.id);
-          if(dniDuplicado){
-            setAlert("El DNI ya se ha registrado. Intente de nuevo"); handleOpen();
-          }
-          else{
-            const response = await fetch(process.env.REACT_APP_API_URL + "/cliente", {
+        } else {
+          const response = await fetch(`http://localhost:4000/api/clients/${task.dni}/${userId}`);
+          if (response.ok) { // Check if DNI already exists for another client
+            setAlert("El DNI ya se ha registrado. Intente de nuevo");
+            handleOpen();
+          } else {
+            // Proceed with adding new client
+            const updatedTask = { 
+              ...task, 
+              id_usuario: { id_usuario: userId } 
+            };
+            const response = await fetch(`http://localhost:4000/api/cliente`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(updatedTask),
             });
-            console.log(response);
+  
             if (response.ok) {
-              // Éxito: redirecciona o realiza cualquier acción deseada
               navigate('/registro');
             } else {
-              // Manejar errores aquí si es necesario
               console.error("Error al crear el cliente");
             }
-          }           
+          }
         }       
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Error en la solicitud:", error);
       } finally {
         setLoading(false);
       }
     }
+  };
+  const handleSubmit1 = async (e) => {
+    console.log('ggggggggggggggggggggggggggggggggggggggg')
+    e.preventDefault();
+    setLoading(true);
+    const dniDuplicado = dataClientes.some((cliente) => cliente.dni === task.dni && cliente.id !== task.id);
+    const edad = calcularEdad(task.fecha_nacimiento);
+    
+    if (task.dni.length !== 8) {
+      setAlert("El DNI no es de 8 dígitos. Intente de nuevo");
+      handleOpen();
+    } else if (edad < 18) {
+      setAlert("El cliente es menor de edad. Intente de nuevo.");
+      handleOpen();
+    
+    } else if (!editing && !dniDuplicado && task.dni !== dataClientes.find(cliente => cliente.dni === task.dni && cliente.id !== task.id).dni) {
+      // Si no estamos en modo de edición y el DNI está duplicado con otro cliente que no es el actual
+      setAlert("El DNI ya se ha registrado para otro cliente. Intente de nuevo.");
+      handleOpen();
+    }else {
+      try {
+        if (editing) {
+          const response = await fetch(`http://localhost:4000/api/cliente/${params.id}`, {
+            method:'PUT',
+            headers:{'Content-Type': 'application/json'},
+            body: JSON.stringify(task)
+          });
+  
+          if (response.ok) {
+            navigate('/registro');
+          } else {
+            console.error("Error al actualizar el cliente");
+          }
+        } else {
+          const response = await fetch(`http://localhost:4000/api/clientsf/${task.dni}/${userId}`);
+          if (response.ok) { // Check if DNI already exists for another client
+            setAlert("El DNI ya se ha registrado. Intente de nuevo");
+            handleOpen();
+          } else {
+            // Proceed with adding new client
+            const updatedTask = { 
+              ...task, 
+              id_usuario: { id_usuario: userId } 
+            };
+            const response = await fetch(`http://localhost:4000/api/cliente`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(updatedTask),
+            });
+  
+            if (response.ok) {
+              navigate('/registro');
+            } else {
+              console.error("Error al crear el cliente");
+            }
+          }
+        }       
+      } catch (error) {
+        console.error("Error en la solicitud:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+  
+  
+  
+  const handleUserIdChange = (event) => {
+    setTask({ ...task, id_usuario: event.target.value });
   };
 
   // Resto de tu código, incluyendo las Autocompletaciones
@@ -300,8 +407,9 @@ export default function NuevoCliente() {
       <Container sx={{ marginTop:'2rem'}}>
           <Typography variant='h3' textAlign='center' sx={{margin:"2rem 0"}}>
               {editing ? "Modificar cliente" : "Crear nuevo cliente"}
-          </Typography>
-        <form onSubmit={handleSubmit}>
+          
+        </Typography>
+        <form onSubmit={editing ?  handleSubmit1: handleSubmit }>
           <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField onChange={handleChange} fullWidth name="nombre_cliente" id="filled-basic" label="Nombre" variant="filled" value={task.nombre_cliente} sx={{ marginBottom:'2rem'}}/>
@@ -331,6 +439,11 @@ export default function NuevoCliente() {
                   getOptionSelected={(option, value) => option.nombre_distrito === value.nombre_distrito} sx={{ marginBottom:'2rem'}}
                   disabled={!dataLoaded} // Deshabilita el Autocomplete mientras los datos se cargan
                   />
+<Typography variant='body1' sx={{ marginBottom: '2rem' }}>
+                El ID del usuario actual es: {userId}
+              </Typography>
+              
+             
 
                 <Autocomplete value={task.id_estadocivil}
                   onChange={(event, newValue) => { setTask({ ...task, id_estadocivil: newValue }); }}
@@ -358,7 +471,16 @@ export default function NuevoCliente() {
                   getOptionSelected={(option, value) => option.motivo === value.motivo} sx={{ marginBottom:'2rem'}}
                   disabled={!dataLoaded} // Deshabilita el Autocomplete mientras los datos se cargan
                   />
-                <Button variant="contained" type="submit" sx={{ marginBottom:'2rem'}} fullWidth> {editing ? "Modificar cliente" : "Agregar cliente"} </Button>
+              <Button
+  variant="contained"
+  type="submit"
+  sx={{ marginBottom:'2rem'}}
+  fullWidth
+  onClick={editing ? handleSubmit1 : handleSubmit}
+>
+  {editing ? "Modificar cliente" : "Agregar cliente"}
+</Button>
+
               </Grid>   
               <Snackbar
                       open={open}

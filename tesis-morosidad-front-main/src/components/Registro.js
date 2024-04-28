@@ -1,11 +1,13 @@
 import Navbar from './Navbar'
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import{Typography, Snackbar, SnackbarContent,Button,TextField, Modal, Box, Grid,Table,TableBody,TableContainer,TableHead,TableRow,Paper,Container, Input, IconButton, Stack} from "@mui/material";
+import{Typography, Snackbar, SnackbarContent,Button,TextField, Modal, Box,Alert, Grid,Table,TableBody,TableContainer,TableHead,TableRow,Paper,Container, Input, IconButton, Stack} from "@mui/material";
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import { usePalabra } from './prueba';
 import { styled } from '@mui/material/styles';
 import Papa from 'papaparse';
 import Close from '@mui/icons-material/Close';
+
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -26,11 +28,11 @@ import Close from '@mui/icons-material/Close';
       border: 0,
     },
   }));
-  
+
 export default function Registro(){
 
     // Define las variables de estado para los datos
-    const [alert,setAlert] = useState("");
+    const [alert, setAlert] = useState('');
     const [dataLoaded, setDataLoaded] = useState(false);
     const [dataDistrito, setDataDistrito] = useState([]);
     const [dataUsuario, setDataUsuario] = useState([]);
@@ -40,10 +42,26 @@ export default function Registro(){
     const [dataMotivo, setDataMotivo] = useState([]);
     const [clientes, setClientes] = useState([]);
     const [clientesExport, setClientesExport] = useState([]);
-    const [pbi,setPBI] = useState('');
-    
+    const [pbi, setPBI] = React.useState('');
+    const [tempPBI, setTempPBI] = useState(pbi);
+    const [userId, setUserId] = useState('');
+    console.log(pbi)
     const navigate = useNavigate();
+    const { actualizarPalabra } = usePalabra();
 
+    const handleChangePalabra = (e) => {
+      const newValue = e.target.value;
+      
+      // Verifica si el valor es vacío o un número
+      if ( /^[0-9]*\.?[0-9]*$/.test(newValue)) {
+          // Actualiza el estado temporal del PBI
+          console.log(newValue)
+          setTempPBI(newValue);
+      }
+  };
+  
+    
+    
     const [openDeleteAll, setOpenDeleteAll] = useState(false);
 
       const handleOpenDeleteAll = () => {
@@ -51,7 +69,7 @@ export default function Registro(){
       };
 
       const handleCloseDeleteAll = () => {
-        setOpenDeleteAll(false);
+        setOpenDeleteAll(true);
       };
 
       const [openDelete, setOpenDelete] = useState([]);
@@ -77,6 +95,10 @@ export default function Registro(){
         const handleClose = (clientIndex) => {
           setOpen(false);
         };
+        
+        // Función para manejar el cambio en el valor de PBI
+      
+      
 
       const style = {
         position: 'absolute',
@@ -104,6 +126,7 @@ export default function Registro(){
       );
 
       const loadData = async () => {
+        console.log('7777')
         try {
           // Carga los datos de distrito
           fetch(process.env.REACT_APP_API_URL + '/region') // Reemplaza con la ruta correcta
@@ -141,10 +164,10 @@ export default function Registro(){
             .catch((error) => console.error('Error al cargar datos de motivo:', error));
 
           // Carga los datos de los clientes
-          // fetch(process.env.REACT_APP_API_URL + '/clientes') // Reemplaza con la ruta correcta
-          // .then((response) => response.json())
-          // .then((data) => setClientes(data))
-          // .catch((error) => console.error('Error al cargar datos de los clientes:', error));
+         //  fetch(process.env.REACT_APP_API_URL + '/clientes') // Reemplaza con la ruta correcta
+           //.then((response) => response.json())
+           //.then((data) => setClientes(data))
+          //.catch((error) => console.error('Error al cargar datos de los clientes:', error));
           
           if(dataRegion && dataDistrito && dataUsuario && dataEstadoCivil && dataNivelEducativo && dataMotivo) {
           setDataLoaded(true);
@@ -158,23 +181,28 @@ export default function Registro(){
 
     // Usa useEffect para cargar los datos cuando el componente se monta
     useEffect(() => {
+      const userIdFromStorage = localStorage.getItem('id_usuario');
         loadData();
+        if (userIdFromStorage) {
+          setUserId(userIdFromStorage);
+        }
     }, [dataLoaded]);
-
 
     // Supongamos que tienes una función que carga y procesa el archivo CSV
     async function processCSVFile(file) {
+      console.log('2')
       try {
+        console.log('a')
         // Lee el archivo CSV y conviértelo en un array de objetos
         const csvData = await readFile(file);
         // Pasar el csvData a dataImport para cambiar los tipos de datos de los campos del cliente
-        const changedData = await changeDataType(csvData);
+        const changedData = changeDataType(csvData);
         
         // Realiza la consulta a la base de datos PostgreSQL con los datos del CSV
         changedData.forEach(async (e)=>{
           await uploadCSVDataToServer(e);
-        })
-
+        });
+    
         console.log('Consulta a la base de datos completada.');
       } catch (error) {
         console.error('Error al procesar el archivo CSV o realizar la consulta a la base de datos:', error);
@@ -183,14 +211,20 @@ export default function Registro(){
 
     // Función para leer el archivo CSV y convertirlo en un array de objetos
     function readFile(file) {
+      console.log('3')
       return new Promise((resolve, reject) => {
+
+        console.log('b')
         const reader = new FileReader();
         reader.onload = (event) => {
-          //const fileContent = event.target.result;
+         // const fileContent = event.target.result;
           const parsedData = CSVToArray(event.target.result); // Supongamos que tienes una función para esto
           
           resolve(parsedData);
+
+          
         };
+        console.log(reader)
         reader.onerror = (error) => {
           reject(error);
         };
@@ -200,41 +234,55 @@ export default function Registro(){
 
     function changeDataType(csvData){
       const clients = []
-
+      console.log('CSV Data:', csvData);
       csvData.forEach(e => {
+        console.log('Elemento de CSV:', e);
         const fechaoriginal = e.fecha_nacimiento;
         const partes = fechaoriginal.split('/');
+        console.log('91')
         const dia = partes[0];
         const mes = partes[1];
         const anio = partes[2];
+        const userIdInt = parseInt(userId);
+        const user = dataUsuario.find(user => user.id_usuario === userIdInt);
         
+        console.log('hhhhhhhhhhhhh', user); 
+        console.log(userId)
+        console.log('9')
         const client = {
           nombre_cliente: e.nombre_cliente,
           dni: e.dni,
           fecha_nacimiento: `${anio}-${mes}-${dia}`,
           cantidad_propiedades: e.cantidad_propiedades,
           cantidad_hijos: e.cantidad_hijos,
-          genero: JSON.parse(e.genero),
+          genero: e.genero ,
           id_distrito: dataDistrito[e.id_distrito-1],
-          id_usuario: dataUsuario[e.id_usuario-1],
+          id_usuario:user,
           id_estadocivil: dataEstadoCivil[e.id_estadocivil-1],
           id_niveleducativo: dataNivelEducativo[e.id_niveleducativo-1],
           salario: e.salario,
           deudas: e.deudas,
-          id_motivo: dataMotivo[e.id_motivo-1]
+          id_motivo: dataMotivo[e.id_motivo-1],
+         
         }
-
-        clients.push(client); 
+        console.log('000')
+        clients.push(client,'jjjjjjjjjj'); 
+        console.log(client,'99999999999');
       });
+      console.log('fff')
+    
       return clients;
+      
     }
 
     // Función para realizar la consulta a la base de datos PostgreSQL a través de una solicitud fetch
     async function uploadCSVDataToServer(csvData) {
+      console.log('6')
       try {
         const dniDuplicado = clientes.some((e) => e.dni ===csvData.dni);
         if(dniDuplicado){
           alert("El DNI ya se ha registrado. Intente de nuevo");
+          console.log('1111111111111111')
         }
         else{
           const response = await fetch(process.env.REACT_APP_API_URL + "/cliente", {
@@ -244,6 +292,7 @@ export default function Registro(){
           });
           if (response.ok) {
             const responseData = await response.json();
+            window.location.reload();
           } else {
             console.error('Error al cargar el archivo CSV en el servidor');
           }
@@ -260,10 +309,11 @@ export default function Registro(){
 
     // Llama a esta función después de seleccionar un archivo CSV en tu interfaz de usuario
     const handleFileChange = (event) => {
+      console.log('1')
       const file = event.target.files[0];
       if (file) {
         processCSVFile(file);
-        window.location.reload();
+      // window.location.reload();
       }
     };
 
@@ -286,7 +336,7 @@ export default function Registro(){
             }
             console.log(element.genero);
             const client = ({
-              id_cliente: element.id_cliente,
+           
               nombre_cliente: element.nombre_cliente,
               dni: element.dni,
               fecha_nacimiento: anio + "-" + mes + "-" + dia,
@@ -294,7 +344,7 @@ export default function Registro(){
               cantidad_hijos: element.cantidad_hijos,
               genero: element.genero ? 'Hombre' : "Mujer",
               distrito: dataDistrito[element.id_distrito-1].nombre_distrito,
-              usuario: dataUsuario.find((e) => e.id_usuario === element.id_usuario).nombre,
+              usuario: dataUsuario.find((e) => e.id_usuario === element.id_usuario).nombre_usuario,
               estadocivil: dataEstadoCivil[element.id_estadocivil-1].tipo_de_estado,
               niveleducativo: dataNivelEducativo[element.id_niveleducativo-1].nivel_educativo,
               salario: element.salario,
@@ -302,6 +352,7 @@ export default function Registro(){
               motivo: dataMotivo[element.id_motivo-1].motivo,
             });
             clientstoExport.push(client);
+            console.log(client)
           });
           console.log(clientstoExport);
           setClientesExport(clientstoExport);
@@ -340,7 +391,7 @@ export default function Registro(){
 
     const handleDelete = async (id) => {      
       try {
-        await fetch(`http://localhost:4000/cliente/${id}`, {
+        await fetch(`http://localhost:4000/api/cliente/${id}`, {
         method:'DELETE',
         })
         setClientes(clientes.filter(cliente => cliente.id_cliente!== id));
@@ -351,41 +402,68 @@ export default function Registro(){
 
     const handleDeleteAll = async () => {      
       try {
-        await fetch(`http://localhost:4000/clientes/`, {
+        await fetch(`http://localhost:4000/api/clientes/${userId}`, {
         method:'DELETE',
-        })
-        window.location.reload();
+        
+      });
+      // Recargar la página después de eliminar todos los clientes
+      window.location.reload();
       } catch (error) {
         console.log(error);
       }
     }
     
     const loadClientes = async () => {
-      const response =  await fetch(process.env.REACT_APP_API_URL + '/clientes')
+      const response =  await fetch(`http://localhost:4000/api/clientes/${userId}` )
       const data = await response.json();
       setClientes(data);
     }
     
-    const handleCalculate = () =>{
-      setAlert('Se completó el cálculo. Ingresa a Resultados para ver las probabilidades');
-      handleOpen();
-    }
+    const handleCalculate = () => {
+      // Obtiene el nuevo valor del PBI
+      const newValue = tempPBI;
+      
+      // Verifica si el valor del PBI es vacío
+      if (newValue.trim() === "") {
+          setAlert("El valor del PBI no puede estar vacío. Por favor, ingresa un valor válido.");
+          setOpen(true);
+          return; // Detiene la ejecución de la función si el valor es vacío
+      }
+  
+      // Actualiza el estado local de pbi con el nuevo valor
+      setPBI(newValue);
+      
+      // Actualiza el estado en el contexto usePalabra
+      actualizarPalabra(newValue);
+      
+      // Almacena el nuevo valor de PBI en el almacenamiento local
+      localStorage.setItem('pbi', newValue);
+  };
+  
+    
 
-    const handlePBIChange = (e) =>{
+    
+
+   /* const handlePBIChange = (e) =>{
       const newValue = e.target.value;
       if (/^[0-9]*\.?[0-9]*$/.test(newValue)) {
         setPBI(newValue);
       }
     }
-
+ */
     return (dataLoaded &&(
         <>
           <Navbar/>
           <Container>
-          <Box component='div' sx={{textAlign:'right', marginTop:'2rem'}}>
-            <Typography variant="h6" display="inline" sx={{marginRight:'.4rem'}}>PBI</Typography>
-            <TextField variant="outlined" size='small' value={pbi} onChange={handlePBIChange} />
-          </Box>
+          <Typography variant='body1' sx={{ marginBottom:'2rem'}}>
+  El ID del usuario actual es: {userId}
+</Typography>
+
+          <Box component='div' sx={{ textAlign: 'right', marginTop: '2rem' }}>
+  <Typography variant="h6" display="inline" sx={{ marginRight: '.4rem' }}>PBI</Typography>
+  <input type="text" onChange={handleChangePalabra} value={tempPBI} />
+</Box>
+
             <Grid container spacing={2} sx={{marginTop:'.5rem', marginBottom:'2rem'}}>
               <Grid item xs={3}>
               <div>
@@ -394,7 +472,7 @@ export default function Registro(){
                     <Input type="file" id='file-upload' accept=".csv" onChange={handleFileChange} sx={{display:'none'}}></Input> 
                     <label htmlFor="file-upload"><Button variant="contained" key="dos" fullWidth component="span">Importar</Button> </label>
                     <Button variant="contained" key="tres" component={Link} sx={{marginBottom:'2rem'}} to="/agregarcliente" >Agregar</Button>
-                    <Button variant="contained" key="cuatro" color='success' sx={{marginBottom:'2rem'}} onClick={handleCalculate}>Calcular</Button>
+                    <Button variant="contained" key="cuatro" color='success' sx={{ marginBottom: '2rem' }} onClick={handleCalculate}>Calcular</Button>
                     <Button variant="contained" key="cinco" color='error' onClick={handleOpenDeleteAll}>Borrar todo</Button>
                       <Modal
                       open={openDeleteAll}

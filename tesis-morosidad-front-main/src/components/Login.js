@@ -42,24 +42,23 @@ export default function Login(){
               setAlert('Inicio de sesión exitoso');
               handleOpen();
               const user = await response.json();
-
-              await fetch (process.env.REACT_APP_API_URL + '/usuario2/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', },
-                body: JSON.stringify({ user }),
-              });
+          
+              // Guarda el id_usuario en el almacenamiento local
+              localStorage.setItem('id_usuario', user.id_usuario);
+          
               dispatch({
-                type: types.authLogin,
-                payload: {id: user.id_usuario, nombre: user.nombre, email: user.email}
+                  type: types.authLogin,
+                  payload: { id: user.id_usuario, nombre: user.nombre_usuario, email: user.email, contrasena: user.contrasena }
               });
               localStorage.setItem('snackbarVisible', 'true');
               navigate('/inicio');
-
-            } else {
+          } else {
               // Autenticación fallida, puedes mostrar un mensaje de error.
-              setAlert('Inicio de sesión fallido');
+              setAlert('Email o contraseña errónea');
               handleOpen();
-            }
+          }
+          
+            
           } catch (error) {
             console.error('Error al enviar la solicitud:', error);
           }

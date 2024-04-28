@@ -1,5 +1,5 @@
 import { pool } from "../db.js";
-
+///////este essssssssssssssssssssssssssss
   export const getAlldistritos = async (req, res, next) => {
     try {
       const allTasks = await pool.query("SELECT * FROM Distrito ");
@@ -120,8 +120,9 @@ import { pool } from "../db.js";
 
   export const getAllClientes = async (req, res, next) => {
     try {
-      const allTasks = await pool.query("SELECT * FROM cliente ORDER BY id_cliente ASC");
-      res.json(allTasks.rows);
+      const {userId} = req.params;
+      const result = await pool.query(`SELECT * FROM cliente WHERE id_usuario = $1`, [userId]);
+      res.json(result.rows);
     } catch (error) {
       next(error);
     }
@@ -130,7 +131,7 @@ import { pool } from "../db.js";
   export const getCliente = async (req, res, next) => {
     try {
       const {id} = req.params;
-      const result = await pool.query(`SELECT * FROM cliente WHERE id_cliente = $1`, [id]);
+      const result = await pool.query(`SELECT * FROM cliente WHERE id_cliente = $1 `, [id]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -142,12 +143,13 @@ import { pool } from "../db.js";
 
   export const getClientesbyNivelEducativo = async (req, res, next) => {
     try {
-      const {id} = req.params;
+      const {id,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_niveleducativo = $1 
+      AND id_usuario = $2 
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
       AND cantidad_propiedades < 2;
-`, [id]);
+`, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -159,12 +161,14 @@ import { pool } from "../db.js";
 
   export const getClientesbyNivelEducativoDistrito = async (req, res, next) => {
     try {
-      const {id, distrito} = req.params;
+      const {id, distrito,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_niveleducativo = $1 
       AND id_distrito = $2 
+      AND id_usuario = $3 
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;`, [id, distrito]);
+      AND cantidad_propiedades < 2;
+      `, [id, distrito,userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -173,14 +177,15 @@ import { pool } from "../db.js";
 
   export const getClientesbyNivelEducativoRegion = async (req, res, next) => {
     try {
-      const {id, region} = req.params;
+      const {id, region,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
       JOIN distrito ON cliente.id_distrito = distrito.id_distrito 
       JOIN region ON region.id_region = distrito.id_region 
       WHERE cliente.id_niveleducativo = $1 
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
       AND cantidad_propiedades < 2 
-      AND region.id_region = $2;`, [id, region]);
+      AND region.id_region = $2
+      and id_usuario=$3;`, [id, region,userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -189,11 +194,12 @@ import { pool } from "../db.js";
 
   export const getClientesbyMotivo = async (req, res, next) => {
     try {
-      const {id} = req.params;
+      const {id,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_motivo = $1 
+      AND id_usuario = $2 
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;`, [id]);
+      AND cantidad_propiedades < 2;`, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -205,11 +211,11 @@ import { pool } from "../db.js";
 
   export const getClientesbyMotivoDistrito = async (req, res, next) => {
     try {
-      const {id, distrito} = req.params;
+      const {id, distrito,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
-      WHERE id_motivo = $1 AND id_distrito = $2 
+      WHERE id_motivo = $1 AND id_distrito = $2 and id_usuario=$3
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;`, [id, distrito]);
+      AND cantidad_propiedades < 2;`, [id, distrito,userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -218,15 +224,16 @@ import { pool } from "../db.js";
 
   export const getClientesbyMotivoRegion = async (req, res, next) => {
     try {
-      const {id, region} = req.params;
+      const {id, region,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
       JOIN distrito ON cliente.id_distrito = distrito.id_distrito 
       JOIN region ON region.id_region = distrito.id_region 
       WHERE cliente.id_motivo = $1 
       AND region.id_region = $2 
+      and id_usuario=$3
       AND EXTRACT(YEAR FROM age(cliente.fecha_nacimiento)) < 27 
       AND cliente.cantidad_propiedades < 2;
-      `, [id, region]);
+      `, [id, region,userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -235,12 +242,13 @@ import { pool } from "../db.js";
 
   export const getClientesbyEstadoCivil = async (req, res, next) => {
     try {
-      const {id} = req.params;
+      const {id,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
-      WHERE id_estadocivil = $1 
+      WHERE id_estadocivil = $1
+      AND id_usuario = $2 
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
       AND cantidad_propiedades < 2;
-      `, [id]);
+      `, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -252,13 +260,14 @@ import { pool } from "../db.js";
 
   export const getClientesbyEstadoCivilDistrito = async (req, res, next) => {
     try {
-      const {id, distrito} = req.params;
+      const {id, distrito,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_estadocivil = $1 
       AND id_distrito = $2 
+      AND id_usuario = $3
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
       AND cantidad_propiedades < 2;
-      `, [id, distrito]);
+      `, [id, distrito,userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -267,16 +276,17 @@ import { pool } from "../db.js";
 
   export const getClientesbyEstadoCivilRegion = async (req, res, next) => {
     try {
-      const {id, region} = req.params;
+      const {id, region,userId} = req.params;
       const result = await pool.query(`SELECT * 
       FROM cliente 
       JOIN distrito ON cliente.id_distrito = distrito.id_distrito 
       JOIN region ON region.id_region = distrito.id_region 
       WHERE cliente.id_estadocivil = $1 
         AND region.id_region = $2 
+        and id_usuario =$3
         AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
         AND cantidad_propiedades < 2;
-      `, [id, region]);
+      `, [id, region,userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -285,11 +295,12 @@ import { pool } from "../db.js";
 
   export const getClientesbyDistrito = async (req, res, next) => {
     try {
-      const {id} = req.params;
+      const {id,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_distrito = $1 
+      AND id_usuario = $2
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;`, [id]);
+      AND cantidad_propiedades < 2;`, [id, userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -298,11 +309,12 @@ import { pool } from "../db.js";
 
   export const getAllClientesbyDistrito = async (req, res, next) => {
     try {
-      const {id} = req.params;
+      const {id,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_distrito = $1 
+      and id_usuario=$2
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2`, [id]);
+      AND cantidad_propiedades < 2`, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -314,14 +326,15 @@ import { pool } from "../db.js";
 
   export const getClientesbyRegion = async (req, res, next) => {
     try {
-      const {id} = req.params;
+      const {id, userId} = req.params;
       const result = await pool.query(`SELECT * 
       FROM cliente 
       JOIN distrito ON cliente.id_distrito = distrito.id_distrito 
       JOIN region ON region.id_region = distrito.id_region 
       WHERE region.id_region = $1
+      AND id_usuario = $2
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2`, [id]);
+      AND cantidad_propiedades < 2`, [id , userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -330,15 +343,16 @@ import { pool } from "../db.js";
 
   export const getAllClientesbyRegion = async (req, res, next) => {
     try {
-      const {id} = req.params;
+      const {id,userId} = req.params;
       const result = await pool.query(`SELECT * 
       FROM cliente 
       JOIN distrito ON cliente.id_distrito = distrito.id_distrito 
       JOIN region ON region.id_region = distrito.id_region 
       WHERE region.id_region = $1
+      and id_usuario=$2
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
       AND cantidad_propiedades < 2;
-      `, [id]);
+      `, [id,userId]);
       res.json(result.rows);
     } catch (error) {
       next(error);
@@ -347,14 +361,17 @@ import { pool } from "../db.js";
 
   export const getDistritosbyRegion = async (req, res, next) => {
     try {
-      const {id} = req.params;
+      const {id,userId} = req.params;
       const result = await pool.query(`SELECT * FROM distrito
       WHERE id_region = $1
       AND id_distrito IN (
         SELECT id_distrito FROM cliente
+       
         WHERE EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27
-        AND cantidad_propiedades < 2
-      );`, [id]);
+        and id_usuario=$2
+        AND cantidad_propiedades < 2);
+      
+      `, [id,userId]);
       res.json(result.rows);
     } catch (error) {
       next(error);
@@ -363,8 +380,8 @@ import { pool } from "../db.js";
 
   export const getClientsbyDNI = async (req, res, next) => {
     try {
-      const {id} = req.params;
-      const result = await pool.query(`SELECT * FROM cliente WHERE dni ILIKE $1`, [`%${id}%`]);
+      const {id,userId} = req.params;
+      const result = await pool.query(`SELECT * FROM cliente WHERE dni ILIKE $1 and id_usuario = $2 `, [`%${id}%`, userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -373,7 +390,18 @@ import { pool } from "../db.js";
       next(error);
     }
   };
-
+  export const getClientsbyDNIigual = async (req, res, next) => {
+    try {
+      const {id,userId} = req.params;
+      const result = await pool.query(`SELECT * FROM cliente WHERE dni=$1 and id_usuario = $2 `, [id, userId]);
+      if(result.rows.length === 0 ) return res.status(404).json({
+        message: "Cliente no encontrado"
+      })
+      res.json(result.rows);
+    } catch (error) {
+      next(error);
+    }
+  };
   export const createcliente = async (req, res, next) => {
     try {
       const {
@@ -383,49 +411,19 @@ import { pool } from "../db.js";
         cantidad_propiedades,
         cantidad_hijos,
         genero,
-        id_distrito, // Supongamos que esto es el nombre del distrito
-        id_usuario,  // Supongamos que esto es el nombre del usuario
+        id_distrito,
+        id_usuario,// Supongamos que esto es el nombre del distrito
+       // Supongamos que esto es el nombre del usuario
         id_estadocivil, // Supongamos que esto es el tipo de estado civil
         id_niveleducativo, // Supongamos que esto es el nivel educativo
         salario,
         deudas,
         id_motivo, // Supongamos que esto es el motivo del préstamo
       } = req.body;
-console.log(req.body)
-      // Función para buscar el ID de un elemento en una tabla por su nombre
-      //const findIdInTable = async (tableName, columnName, value) => {
-      //    const idtabla = "id_"+tableName;
-      //    const result = await pool.query(
-      //      `SELECT ${idtabla} FROM ${tableName} WHERE ${columnName} = $1`,
-      //      [value]
-      //    );
-      //    return result.rows[0]?.id; // Devuelve el ID si se encuentra, o undefined si no se encuentra
-      //};
-  
 
-      // Buscar los IDs correspondientes en las tablas relacionadas
-      //const distritoId = await findIdInTable('distrito', 'nombre_distrito', id_distrito.nombre_distrito);
-      //const usuarioId = await findIdInTable('usuario', 'nombre_usuario', id_usuario.nombre);
-      //const estadoCivilId = await findIdInTable('estado_civil', 'tipo_de_estado', id_estadocivil.tipo_de_estado);
-      //const nivelEducativoId = await findIdInTable('nivel_educativo', 'nivel_educativo', id_niveleducativo.nivel_educativo);
-      //const motivoId = await findIdInTable('motivo_prestamo', 'motivo', id_motivo.motivo);
-      //console.log(nombre_cliente);
-      //console.log(dni);
-      //console.log(fecha_nacimiento);
-      //console.log(cantidad_propiedades);
-      //console.log(cantidad_hijos);
-      //console.log(genero);
-      //console.log(id_distrito.id_distrito);
-      //console.log(id_usuario.id_usuario);
-      //console.log(id_estadocivil.id_estado_civil);
-      //console.log(id_niveleducativo.id_nivel_educativo);
-      //console.log(salario);
-      //console.log(deudas);
-      //console.log(id_motivo.id_motivo_prestamo);
-      // Insertar el nuevo cliente en la tabla 'cliente' con los IDs correspondientes
-
+    
       const nuevocliente = await pool.query(
-        "INSERT INTO cliente(nombre_cliente, dni, fecha_nacimiento, cantidad_propiedades, cantidad_hijos, genero, id_distrito, id_usuario, id_estadocivil, id_niveleducativo, salario, deudas, id_motivo) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *",
+        "INSERT INTO cliente(nombre_cliente, dni, fecha_nacimiento, cantidad_propiedades, cantidad_hijos, genero,id_distrito, id_usuario, id_estadocivil, id_niveleducativo, salario, deudas, id_motivo) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *",
         [
           nombre_cliente,
           dni,
@@ -433,7 +431,7 @@ console.log(req.body)
           cantidad_propiedades,
           cantidad_hijos,
           genero,
-          id_distrito.id_distrito, // Utiliza los IDs correspondientes
+          id_distrito.id_distrito, 
           id_usuario.id_usuario,
           id_estadocivil.id_estadocivil,
           id_niveleducativo.id_niveleducativo,
@@ -442,9 +440,10 @@ console.log(req.body)
           id_motivo.id_motivo,
           
         ]
-        
+       
       );
-  
+      console.log(nombre_cliente,dni)
+      console.log('c')
       // Devolver la respuesta completa
       res.json(nuevocliente.rows[0]);
     } catch (error) {
@@ -452,7 +451,59 @@ console.log(req.body)
       next(error);    
     }
   };
+  export const createcliente1 = async (req, res, next) => {
+    const { userId } = req.params;
+    try {
+      const {
+        nombre_cliente,
+        dni,
+        fecha_nacimiento,
+        cantidad_propiedades,
+        cantidad_hijos,
+        genero,
+        id_distrito,
+        id_usuario,
+        // Supongamos que esto es el nombre del distrito
+       // Supongamos que esto es el nombre del usuario
+        id_estadocivil, // Supongamos que esto es el tipo de estado civil
+        id_niveleducativo, // Supongamos que esto es el nivel educativo
+        salario,
+        deudas,
+        id_motivo, // Supongamos que esto es el motivo del préstamo
+      
+      } = req.body;
 
+    
+      const nuevocliente = await pool.query(
+        "INSERT INTO cliente(nombre_cliente, dni, fecha_nacimiento, cantidad_propiedades, cantidad_hijos, genero, id_distrito, id_estadocivil, id_niveleducativo, salario, deudas, id_motivo, id_usuario) SELECT $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 WHERE id_usuario = $14 RETURNING *;",
+        [
+          nombre_cliente,
+          dni,
+          fecha_nacimiento,
+          cantidad_propiedades,
+          cantidad_hijos,
+          genero,
+          id_distrito.id_distrito, 
+          id_usuario.userId,
+          id_estadocivil.id_estadocivil,
+          id_niveleducativo.id_niveleducativo,
+          salario,
+          deudas,
+          id_motivo.id_motivo,
+       
+          
+        ]
+       
+      );
+      console.log(nombre_cliente,dni)
+      console.log('c')
+      // Devolver la respuesta completa
+      res.json(nuevocliente.rows[0]);
+    } catch (error) {
+      console.log(error);
+      next(error);    
+    }
+  };
   export const deleteCliente = async (req, res, next) => {
     const { id } = req.params;
     console.log(id);
@@ -469,10 +520,10 @@ console.log(req.body)
   };
 
   export const deleteClientes = async (req, res, next) => {
-    const { id } = req.params;
-    console.log(id);
+    const {userId} = req.params;
+   
     try {
-        const result = await pool.query('DELETE FROM cliente WHERE id_usuario = $1', [id]);
+        const result = await pool.query('DELETE FROM cliente WHERE id_usuario = $1', [userId]);
         if(result.rowCount===0) return res.status(404).json({
             message: "El usuario no ha registrado clientes"
         })
@@ -484,7 +535,9 @@ console.log(req.body)
   };
 
   export const deleteAllClientes = async (req, res, next) => {
+    console.log('a')
     try {
+     
         const result = await pool.query('DELETE FROM cliente');
         if(result.rowCount===0) return res.status(404).json({
             message: "No hay clientes registrados en el sistema"
@@ -526,11 +579,11 @@ console.log(req.body)
           genero,
           id_distrito.id_distrito, // Utiliza los IDs correspondientes
           id_usuario.id_usuario,
-          id_estadocivil.id_estado_civil,
-          id_niveleducativo.id_nivel_educativo,
+          id_estadocivil.id_estadocivil,
+          id_niveleducativo.id_niveleducativo,
           salario,
           deudas,
-          id_motivo.id_motivo_prestamo,
+          id_motivo.id_motivo,
           id
       ]);
       

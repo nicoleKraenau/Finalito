@@ -47,41 +47,75 @@ const CrearCuenta = () =>{
           setTask({ title: data.title, description: data.description });
         };
 
-        function findEmail(){
-          let found = false;
-          usuarios.forEach(e => {
-              if(e.email = task.email) found = true;
-          });
-          return found;
-        }
+        function findEmail() {
+          return usuarios.some(e => e.email === task.email);
+      }
         
-        const handleChange = (e) => setTask({ ...task, [e.target.name]: e.target.value });
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        // Verificar si el campo es el nombre y si contiene solo letras y espacios
+        if (name === "nombre" && /^[a-zA-Z\s]*$/.test(value)) {
+            setTask({ ...task, [name]: value });
+        } else if (name !== "nombre") { // Para otros campos, simplemente actualizar el estado
+            setTask({ ...task, [name]: value });
+        }
+    };
     
-        const handleSubmit = async (e) => {
-            e.preventDefault();
-            setLoading(true);
-            if(task.contrasena !== "" && task.email !=="" && task.nombre !== "")
-            {
-              if(!findEmail()){
-                const response = await fetch(process.env.REACT_APP_API_URL + "/registrousuario", {
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+  
+      const nombreEmpty = task.nombre === "";
+      const emailEmpty = task.email === "";
+      const contrasenaEmpty = task.contrasena === "";
+      const contrasenaLengthValid = task.contrasena.length > 8; // Verificar la longitud de la contraseña
+      const contrasenaSpecialCharValid = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(task.contrasena); // Verificar la presencia de caracteres especiales
+  
+      if (!nombreEmpty && !emailEmpty && !contrasenaEmpty && contrasenaLengthValid && contrasenaSpecialCharValid) {
+          if (!findEmail()) {
+              const response = await fetch(process.env.REACT_APP_API_URL + "/registrousuario", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(task),
-                });
-                const data =await response.json();
-              }
-              else{
-                setAlert("El correo ya ha sido registrado. Intente con otro.");
-                setOpen(true);
-              }              
-            }
-            else{
-              setAlert("Complete todos los campos.");
+              });
+              const data = await response.json();
+          } else {
+              setAlert("El correo ya ha sido registrado. Intente con otro.");
               setOpen(true);
-            }
-             
-          };
-
+          }
+      } else {
+          let errorMessage = "";
+  
+          if (nombreEmpty && contrasenaEmpty) {
+              errorMessage = "Campos incompletos. ";
+          } else if (emailEmpty && contrasenaEmpty) {
+              errorMessage = "Campos incompletos. ";
+          } else if (emailEmpty && nombreEmpty) {
+              errorMessage = "Campos incompletos. ";
+          } else {
+              if (nombreEmpty) {
+                  errorMessage += "Campo nombre incompleto. ";
+              }
+              if (emailEmpty) {
+                  errorMessage += "Campo email incompleto. ";
+              }
+              if (contrasenaEmpty) {
+                  errorMessage += "Campo contraseña incompleto. ";
+              }
+              if (!contrasenaLengthValid) {
+                  errorMessage += "La contraseña debe tener más de 8 caracteres. ";
+              }
+              if (!contrasenaSpecialCharValid) {
+                  errorMessage += "La contraseña debe contener al menos un carácter especial. ";
+              }
+          }
+  
+          setAlert(errorMessage.trim()); // Eliminar espacios adicionales al principio y al final
+          setOpen(true);
+      }
+  };
+  
           const action = (
             <React.Fragment>
               <IconButton
