@@ -13,151 +13,7 @@ import PropTypes from 'prop-types';
 import Cards from './Cards';
 import { usePalabra } from './prueba';
 
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
   
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
-  
-  function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
-  }
-  
-  function getComparator(order, orderBy) {
-    return order === 'desc'
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  }
-  
-  function stableSort(array, comparator) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
-      if (order !== 0) {
-        return order;
-      }
-      return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-  }
-  
-  const headCells = [
-    {
-      id: 'dni',
-      numeric: false,
-      disablePadding: false,
-      label: 'DNI',
-    },
-    {
-      id: 'nombre',
-      numeric: false,
-      disablePadding: false,
-      label: 'Nombre',
-    },
-    
-    {
-      id: 'distrito',
-      numeric: false,
-      disablePadding: false,
-      label: 'Distrito',
-    },
-    {
-      id: 'motivo', 
-      numeric: false,
-      disablePadding: false,
-      label: 'Motivo',
-    },
-    {
-      id: 'salario',
-      numeric: false,
-      disablePadding: false,
-      label: 'Salario',
-    },
-    {
-      id: 'niveleducativo', //falta cambiarlo a porcentaje de morosidad
-      numeric: false,
-      disablePadding: false,
-      label: 'Educación',
-    },
-    {
-      id: 'edad',
-      numeric: false,
-      disablePadding: false,
-      label: 'Edad',
-    },
- 
-  
-    {
-      id: 'porcentaje', //falta cambiarlo a porcentaje de morosidad
-      numeric: false,
-      disablePadding: false,
-      label: 'Porcentaje',
-    },
-  ];
-  
-function EnhancedTableHead({ order, orderBy, onRequestSort }) {
-  const [hoveredColumn, setHoveredColumn] = useState(null); // Aquí se agrega el estado
-
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-    setHoveredColumn(property);
-  };
-      
-    return (
-      <TableHead>
-        <TableRow>
-          {headCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
-              padding={headCell.disablePadding ? 'none' : 'normal'}
-              sortDirection={orderBy === headCell.id ? order : false}
-              sx={{backgroundColor:'#000000'}}
-            >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)} sx={{color:'#ffffff', ':hover':{color:'#ffffff'}, '&.Mui-active':{color:'#ffffff'}, '& .MuiTableSortLabel-icon':{color:'#ffffff !important'}}}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-    );
-  }
-  
-  EnhancedTableHead.propTypes = {
-    onRequestSort: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-  };
 
 export default function Resultado(){
   const [alertOpen, setAlertOpen] = useState(false);
@@ -180,6 +36,8 @@ const [userId, setUserId] = useState('');
 const [filterValue, setFilterValue] = useState(''); // Estado para almacenar el valor del filtro
 const [showHeaders, setShowHeaders] = useState(false);
 const [initialPorcentajes, setInitialPorcentajes] = useState([]);
+const [defaultOrder, setDefaultOrder] = React.useState('asc');
+const [defaultOrderBy, setDefaultOrderBy] = React.useState('porcentaje');
 const [filterOptions, setFilterOptions] = useState({
     dni: true,
     nombre: false,
@@ -215,13 +73,171 @@ const handleApplyFilters = () => {
   // Aplicar el filtro a los clientes según los filtros seleccionados
   let filteredClients = [...clientes];
   newSelectedFilters.forEach(filter => {
-    filteredClients = filteredClients.filter(cliente => cliente[filter]);
+    if (filter === 'dni') {
+      // Si el filtro es por DNI, aplicar el filtro directamente sobre la lista de clientes
+      filteredClients = filteredClients.filter(cliente =>
+        cliente.dni.toLowerCase().includes(dni.toLowerCase())
+      );
+    } else {
+      // Para otros filtros, aplicar la lógica de filtrado correspondiente
+      filteredClients = filteredClients.filter(cliente => cliente[filter]);
+    }
   });
+
+  // Actualizar el estado con la lista de clientes filtrados
   setClientesFiltrados(filteredClients);
 
+  // Mostrar las cabeceras de la tabla después de aplicar los filtros
   setShowHeaders(true);
 };
 
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === 'asc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
+
+const headCells = [
+  {
+    id: 'dni',
+    numeric: false,
+    disablePadding: false,
+    label: 'DNI',
+  },
+  {
+    id: 'porcentaje', //falta cambiarlo a porcentaje de morosidad
+    numeric: false,
+    disablePadding: false,
+    label: 'Porcentaje',
+  },
+  {
+    id: 'nombre',
+    numeric: false,
+    disablePadding: false,
+    label: 'Nombre',
+  },
+  
+  {
+    id: 'distrito',
+    numeric: false,
+    disablePadding: false,
+    label: 'Distrito',
+  },
+  {
+    id: 'motivo', 
+    numeric: false,
+    disablePadding: false,
+    label: 'Motivo',
+  },
+  {
+    id: 'salario',
+    numeric: false,
+    disablePadding: false,
+    label: 'Salario',
+  },
+  {
+    id: 'niveleducativo', //falta cambiarlo a porcentaje de morosidad
+    numeric: false,
+    disablePadding: false,
+    label: 'Educación',
+  },
+  {
+    id: 'edad',
+    numeric: false,
+    disablePadding: false,
+    label: 'Edad',
+  },
+
+
+
+];
+
+function EnhancedTableHead({ order, orderBy, onRequestSort }) {
+const [hoveredColumn, setHoveredColumn] = useState(null); // Aquí se agrega el estado
+
+const createSortHandler = (property) => (event) => {
+  onRequestSort(event, property);
+  setHoveredColumn(property);
+};
+    
+  return (
+    <TableHead>
+      <TableRow>
+        {headCells.map((headCell) => (
+         filterOptions[headCell.id] && 
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false}
+            sx={{backgroundColor:'#000000'}}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)} sx={{color:'#ffffff', ':hover':{color:'#ffffff'}, '&.Mui-active':{color:'#ffffff'}, '& .MuiTableSortLabel-icon':{color:'#ffffff !important'}}}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+}
+
+EnhancedTableHead.propTypes = {
+  onRequestSort: PropTypes.func.isRequired,
+  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  orderBy: PropTypes.string.isRequired,
+};
 
 
 
@@ -267,6 +283,9 @@ const handleApplyFilters = () => {
     const [openList, setOpenList] = useState(false);
   
     const handleToggle = () => {setOpenList(!openList);};
+    const [openList2, setOpenList2] = useState(false);
+  
+    const handleToggle2 = () => {setOpenList2(!openList2);};
 
     const loadData = async () => {
       try {
@@ -312,45 +331,41 @@ const handleApplyFilters = () => {
     }
 
     // Usa useEffect para cargar los datos cuando el componente se monta
-    useEffect(() => {
-      const userIdFromStorage = localStorage.getItem('id_usuario');
-        loadData();
-        if (userIdFromStorage) {
-          setUserId(userIdFromStorage);
-        }
-    }, [dataLoaded]);
-    const handleCloseAlert = (event, reason) => {
-      if (reason === 'clickaway') {
-        return;
-      }
-      setAlertOpen(false);
-    };
+    
     const exportClients = async () => {
+      console.log('hhhhhhhuuuuuuuuuuuuuuuu')
       if (clientes.length === 0) {
        // setAlertOpen("El valor del PBI no puede estar vacío. Por favor, ingresa un valor válido.");
         console.log('jjjj')
         setAlertOpen(true);
         return;
       }
+    console.log('hhhhhhhuuuuuuuuuuuuuuuu')
+    let clientstoExport = [];
+    clientes.forEach(element => {
+
+      console.log(porcentajes)
+        // Obtener el porcentaje correspondiente al ID del usuario
+        const porcentaje = calcularPorcentaje(element); // Calcula el porcentaje
     
-      let clientstoExport = [];
-      clientes.forEach(element => {
         const client = {
-          id_cliente: element.id_cliente,
-          nombre_cliente: element.nombre_cliente,
-          dni: element.dni,
-          fecha_nacimiento: element.fecha_nacimiento,
-          cantidad_propiedades: element.cantidad_propiedades,
-          cantidad_hijos: element.cantidad_hijos,
-          genero: element.genero ? 'Hombre' : "Mujer",
-          distrito: element.id_distrito.nombre_distrito, 
-          usuario: element.id_usuario.nombre_usuario,
-          estadocivil: element.id_estadocivil.tipo_de_estado,
-          niveleducativo: element.id_niveleducativo.nivel_educativo,
-          salario: element.salario,
-          deudas: element.deudas,
-          motivo: element.id_motivo.motivo,
+            id_cliente: element.id_cliente,
+            nombre_cliente: element.nombre_cliente,
+            dni: element.dni,
+            fecha_nacimiento: element.fecha_nacimiento,
+            cantidad_propiedades: element.cantidad_propiedades,
+            cantidad_hijos: element.cantidad_hijos,
+            genero: element.genero ? 'Hombre' : "Mujer",
+            distrito: element.id_distrito.nombre_distrito, 
+            usuario: element.id_usuario.nombre_usuario,
+            estadocivil: element.id_estadocivil.tipo_de_estado,
+            niveleducativo: element.id_niveleducativo.nivel_educativo,
+            salario: element.salario,
+            deudas: element.deudas,
+            motivo: element.id_motivo.motivo,
+            porcentaje: porcentaje,
         };
+        console.log(client)
         clientstoExport.push(client);
       });
     
@@ -387,7 +402,6 @@ const handleApplyFilters = () => {
     
       return edad;
     }
-       
     const loadClientes = async () => {
       const response = await fetch(`http://localhost:4000/api/clientes/${userId}`);
       const data = await response.json();
@@ -421,32 +435,50 @@ const handleApplyFilters = () => {
         // Verifica el porcentaje calculado
         console.log("Porcentaje calculado:", porcentaje);
     
-        // Check if age is less than 20
-        if (edad > 7) {
-          const client = ({
-            id_cliente: element.id_cliente,
-            nombre_cliente: element.nombre_cliente,
-            dni: element.dni,
-            fecha_nacimiento: anio + "-" + mes + "-" + dia,
-            cantidad_propiedades: element.cantidad_propiedades,
-            cantidad_hijos: element.cantidad_hijos,
-            genero: element.genero,
-            id_distrito: distrito || "",
-            id_usuario: usuario || "",
-            id_estadocivil: estadocivil || "",
-            id_niveleducativo: niveleducativo || "",
-            salario: element.salario,
-            deudas: element.deudas,
-            id_motivo: motivo || "",
+        // Crea un objeto que contenga el ID del usuario y el porcentaje
+        const porcentajeObjeto = {
+          id_usuario: element.id_usuario,
+          porcentaje: porcentaje
+        };
+    
+        // Agrega este objeto al array de porcentajes
+        porcentajesArray.push(porcentajeObjeto);
+    
+        // Si la edad es mayor a 10, agrega el cliente a la lista
+        if (edad > 30) {
+          clients.push({
+            ...element,
+            anio_nacimiento: anio,
+            mes_nacimiento: mes,
+            dia_nacimiento: dia,
+            distrito: distrito,
+            motivo: motivo,
+            usuario: usuario,
+            estadocivil: estadocivil,
+            niveleducativo: niveleducativo,
           });
-          clients.push(client);
-          porcentajesArray.push(porcentaje); // Añade el porcentaje al array aquí
         }
       });
-      console.log("Porcentajes Array:", porcentajesArray); // Verifica el array de porcentajes
+    
+      // Ordena los clientes por deudas de forma descendente
+      clients.sort((a, b) => b.deudas - a.deudas);
+    
+      // Establece los clientes filtrados en el estado
       setClientes(clients);
+    
+      // Calcula los top clientes
+      const topClientes = clients.slice(0, 5);
+   //   setTopClientes(topClientes);
+    
+      // Establece el array de porcentajes en el estado
       setPorcentajes(porcentajesArray);
+    
+      console.log("Datos cargados de loadClientes");
+      console.log(userId);
+      console.log(clients);
     };
+    
+    
     
     const handleRequestSort = (event, property) => {
       // Determinar el nuevo orden y la columna por la que se ordenará
@@ -457,7 +489,7 @@ const handleApplyFilters = () => {
       if (property === 'porcentaje') {
         // Ordenar por la columna 'porcentaje'
         console.log("Ordenando por 'porcentaje'");
-        newOrder = orderBy === 'porcentaje' && order === 'asc' ? 'desc' : 'asc';  // Invertir el orden si la columna es 'porcentaje'
+        newOrder = orderBy === 'porcentaje' && order === 'desc' ? 'asc' : 'desc';  // Invertir el orden si la columna es 'porcentaje'
       } else if (property === 'salario') {
         // Ordenar por la columna 'fecha'
         console.log("Ordenando por 'fecha'");
@@ -475,40 +507,56 @@ const handleApplyFilters = () => {
     
       const sortedClientes = [...clientes].sort((a, b) => {
         if (property === 'porcentaje') {
-          // Obtener el porcentaje correspondiente a cada cliente
-      const porcentajeA = a['salario'] || 0;
-      const porcentajeB = b['salario']|| 0;
+          console.log('hhhhhhhhhhjjjhhh')
+     
+       // Obtener el índice del cliente en el arreglo de porcentajes
+       const indexA = clientes.indexOf(a);
+       const indexB = clientes.indexOf(b);
+       console.log(indexA)
+       // Obtener los porcentajes correspondientes a cada cliente
+       const porcentajeA = porcentajes[indexA] || 0;
+       const porcentajeB = porcentajes[indexB] || 0;
 
-    console.log(porcentajeA)
-    console.log(porcentajeB)
-    console.log(porcentajeA)
+    console.log(porcentajes)
+    console.log(porcentajeA > porcentajeB)
+    console.log(porcentajeA > porcentajeB  ? 1 : -1 )
           // Comparar y ordenar los clientes basados en los porcentajes
-          return newOrder === 'asc' ? porcentajeA - porcentajeB : porcentajeB - porcentajeA  ;
-        } else if (property === 'fecha') {
-          const dateA = new Date(a[property]);
-          const dateB = new Date(b[property]);
-          
-          return newOrder === 'asc' ? dateA - dateB : dateB - dateA;
-        } else {
-          console.log('fue',a[property])
-          return newOrder === 'asc' ? (a[property] > b[property] ? 1 : -1) : (b[property] > a[property] ? 1 : -1);
-          
-        }
+          return newOrder === 'asc' ? porcentajeA > porcentajeB  ? 1 : -1 : porcentajeB > porcentajeA  ? 1 : -1 ;
+        } 
       });
     
       // Actualizar el estado de los clientes con el arreglo ordenado
       setClientes(sortedClientes);
     
       // Mostrar el estado cuando el orden es ascendente
-      if (newOrder === 'asc') {
+      if (newOrder === 'asc' ) {
         console.log("Nuevo orden ascendente:", sortedClientes);
       }
       if (newOrder === 'desc') {
-        console.log("Nuevo orden ascendente:", sortedClientes);
+        console.log("Nuevo orden descendente:", sortedClientes);
       }
     };
     
+    useEffect(() => {
+      const userIdFromStorage = localStorage.getItem('id_usuario');
+        loadData();
+        if (userIdFromStorage) {
+          setUserId(userIdFromStorage);
+        }
+
+        setOrder(defaultOrder);
+        setOrderBy(defaultOrderBy);
+        handleRequestSort(null, defaultOrderBy);
+    }, [dataLoaded]);
     
+    const handleCloseAlert = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setAlertOpen(false);
+
+
+    };
     
     
     const handleChangeFilterOption = (event) => {
@@ -553,30 +601,29 @@ const handleApplyFilters = () => {
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - clientes.length) : 0;
 
-    const visibleRows = React.useMemo(() => {
-      if (dni === '') {
+    const visibleRows = React.useMemo(
+      () => {
+        if (dni === '') {
           // Si el campo de DNI está vacío, mostrar todos los registros
-          let filteredClients = clientes.filter(cliente => {
-              return selectedFilterCategories.some(category => cliente.hasOwnProperty(category));
-          });
-          return stableSort(filteredClients, getComparator(order, orderBy)).slice(
-              page * rowsPerPage,
-              page * rowsPerPage + rowsPerPage
+          return stableSort(clientes, getComparator(order, orderBy)).slice(
+            page * rowsPerPage,
+            page * rowsPerPage + rowsPerPage
           );
-      } else {
+        } else {
           // Si se ha ingresado un valor en el campo de DNI, filtrar los registros
           const filteredClientes = clientes.filter((cliente) =>
-              cliente.dni.toLowerCase().includes(dni.toLowerCase())
+            cliente.dni.toLowerCase().includes(dni.toLowerCase())
           );
           console.log(filteredClientes);
           return stableSort(filteredClientes, getComparator(order, orderBy)).slice(
-              page * rowsPerPage,
-              page * rowsPerPage + rowsPerPage
+            page * rowsPerPage,
+            page * rowsPerPage + rowsPerPage
           );
-      }
-  }, [order, orderBy, page, rowsPerPage, clientes, dni, selectedFilterCategories]);
-// Calcula el porcentaje
+        }
+      },[order, orderBy, page, rowsPerPage, clientes, dni],);
+
 const calcularPorcentaje = (cliente) => {
+  console.log('kkkkkkkkkkkkkkk')
   const porcentaje = Math.max(
     0,
     Math.min(
@@ -611,8 +658,8 @@ const calcularPorcentaje = (cliente) => {
                     <Input type="file" id='file-upload' accept=".csv" onChange={handleFileChange} sx={{display:'none'}}></Input> 
                     <label htmlFor="file-upload"><Button variant='contained' fullWidth component="span" sx={{marginBottom:'2rem'}}>Importar</Button> </label>
                     <Button variant='contained' fullWidth component={Link} sx={{marginBottom:'2rem'}} to="/agregarcliente" >Agregar</Button>*/}
-                    <Button variant='contained' fullWidth sx={{backgroundColor:"#B9B9B9", ':hover':{backgroundColor:'#B9B9B9'}}} endIcon={<DensityMediumSharpIcon />} onClick={handleToggle}>Variables evaluadas</Button>
-                    <Collapse in={openList}>
+                    <Button variant='contained' fullWidth sx={{backgroundColor:"#B9B9B9", ':hover':{backgroundColor:'#B9B9B9'}}} endIcon={<DensityMediumSharpIcon />} onClick={handleToggle2}>Variables evaluadas</Button>
+                    <Collapse in={openList2}>
                       <Paper>
                         <List>
                           <ListItem>
@@ -653,10 +700,7 @@ const calcularPorcentaje = (cliente) => {
                 </Button>
                 {openList && (
                     <Paper>
-                    <FormControlLabel
-                        control={<Checkbox checked={filterOptions.dni} onChange={handleChangeFilterOption} name="dni" />}
-                        label="DNI"
-                    />
+                   
                     <FormControlLabel
                         control={<Checkbox checked={filterOptions.nombre} onChange={handleChangeFilterOption} name="nombre" />}
                         label="Nombre"
@@ -682,10 +726,7 @@ const calcularPorcentaje = (cliente) => {
                         control={<Checkbox checked={filterOptions.niveleducativo} onChange={handleChangeFilterOption} name="niveleducativo" />}
                         label="Educación"
                     />
-                     <FormControlLabel
-                        control={<Checkbox checked={filterOptions.porcentaje} onChange={handleChangeFilterOption} name="porcentaje" />}
-                        label="Porcentaje"
-                    />
+                   
                <Button
           variant='contained'
           fullWidth
@@ -709,9 +750,12 @@ const calcularPorcentaje = (cliente) => {
                     />
       
       <TableBody>
+        
         {visibleRows.map((cliente, i) => (
           <React.Fragment key={cliente.id_cliente}>
+            
             <StyledTableRow key={cliente.id_cliente} onClick={() => handleOpen(cliente.id_cliente)}>
+           
               {getVisibleColumns().map((column) => (
                 <StyledTableCell key={column}>
                   {column === "DNI" && cliente.dni}
@@ -768,6 +812,11 @@ const calcularPorcentaje = (cliente) => {
 
                   </Table>
                 </TableContainer>
+                <p></p>
+                <p style={{color: 'red', fontWeight: 'bold', fontStyle: 'italic' }}>
+  Clientes que no se muestran en la tabla no cuentan con probabilidad de morosidad
+</p>
+
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
@@ -777,6 +826,7 @@ const calcularPorcentaje = (cliente) => {
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
                 />
+                
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography variant="h6" display="inline" sx={{ marginRight: '.4rem' }}>
                     DNI
@@ -800,6 +850,8 @@ const calcularPorcentaje = (cliente) => {
         </MuiAlert>
         </Snackbar>
                 </Box>
+                <p></p>
+                
               </Grid>
             </Grid>
           </Container>
