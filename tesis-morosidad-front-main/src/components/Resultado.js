@@ -645,14 +645,12 @@ const calcularPorcentaje = (cliente) => {
     return (dataLoaded && (
         <>
           <Navbar/>
-          <Typography variant='body1' sx={{ marginBottom:'2rem'}}>
-  El ID del usuario actual es: {userId}
-</Typography>
+         ¿
           <Container sx={{marginBottom:'2rem'}}>
             <Typography variant='h3' textAlign='center' sx={{margin:"2rem 0"}}>
                 RESULTADO DE CLIENTES MOROSOS
             </Typography>
-            <p>El valor de PBI es: {palabra}</p>
+          
 
             <Grid container spacing={2} sx={{marginTop:'2rem'}}>
             
@@ -763,11 +761,11 @@ const calcularPorcentaje = (cliente) => {
                 <StyledTableCell key={column}>
                   {column === "DNI" && cliente.dni}
                   {column === "Nombre" && cliente.nombre_cliente}
-                  {column === "Distrito" && cliente.id_distrito}
+                  {column === "Distrito" && cliente.id_distrito.nombre_distrito}
                   {column === "Salario" && cliente.salario}
                   {column === "Edad" && calcularEdad(cliente.fecha_nacimiento)}
-                  {column === "Motivo" && cliente.id_motivo}
-                  {column === "Educación" && cliente.id_niveleducativo}
+                  {column === "Motivo" && cliente.id_motivo.motivo}
+                  {column === "Educación" && cliente.id_niveleducativo.nivel_educativo}
                   {column === "Porcentaje" && calcularPorcentaje(cliente)}
                  
                 </StyledTableCell>
@@ -795,7 +793,7 @@ const calcularPorcentaje = (cliente) => {
             <Grid item xs={6}> 
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Region:</b> {dataRegion[cliente.id_distrito.id_region-1] ? dataRegion[cliente.id_distrito.id_region-1].nombre_region : "Region no disponible"} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Distrito:</b> {cliente.id_distrito.nombre_distrito} </Typography>
-              <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Usuario:</b> {cliente.id_usuario.nombre} </Typography>
+              <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Usuario:</b> {cliente.id_usuario.nombre_usuario} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Estado Civil:</b> {cliente.id_estadocivil.tipo_de_estado} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Nivel Educativo:</b> {cliente.id_niveleducativo.nivel_educativo} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Motivo:</b> {cliente.id_motivo.motivo} </Typography>

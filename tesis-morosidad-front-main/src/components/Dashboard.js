@@ -825,7 +825,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                     {showComponentA
                     ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
                     : <Fragment>
-                      {datacountClientsDistrito.length > 0
+                      {dataDistrito.length > 0
                       ? <BarRegion/>
                       : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
                       <p>{datacountClientsDistrito.length}</p>
@@ -838,7 +838,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                     {showComponentA
                     ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
                     : <Fragment>
-                      {datacountClientsDistrito.length > 0
+                      {dataDistrito.length > 0
                       ? <BarDistrito/>
                       : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
                       </Fragment>
@@ -852,7 +852,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                       {datacountClientsDistrito.length > 0
                       ? <PieEstadoCivil/>
                       : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
-                      
+                      <p>{datacountClientsDistrito.length}</p>
                       </Fragment>
                     }                          
                   </Grid>
