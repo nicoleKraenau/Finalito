@@ -432,6 +432,8 @@ EnhancedTableHead.propTypes = {
         const edad = calcularEdad(element.fecha_nacimiento);
         const porcentaje = calcularPorcentaje(element); // Calcula el porcentaje
     
+        console.log(distrito);
+
         // Verifica el porcentaje calculado
         console.log("Porcentaje calculado:", porcentaje);
     
@@ -451,11 +453,11 @@ EnhancedTableHead.propTypes = {
             anio_nacimiento: anio,
             mes_nacimiento: mes,
             dia_nacimiento: dia,
-            distrito: distrito,
-            motivo: motivo,
-            usuario: usuario,
-            estadocivil: estadocivil,
-            niveleducativo: niveleducativo,
+            id_distrito: distrito,
+            id_motivo: motivo,
+            id_usuario: usuario,
+            id_estadocivil: estadocivil,
+            id_niveleducativo: niveleducativo,
           });
         }
       });
@@ -790,8 +792,8 @@ const calcularPorcentaje = (cliente) => {
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Salario:</b> {cliente.salario} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Deudas:</b> {cliente.deudas} </Typography>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Region:</b> {dataRegion[cliente.id_distrito.id_region - 1] ? dataRegion[cliente.id_distrito.id_region - 1].nombre_region : "Region no disponible"} </Typography>
+            <Grid item xs={6}> 
+              <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Region:</b> {dataRegion[cliente.id_distrito.id_region-1] ? dataRegion[cliente.id_distrito.id_region-1].nombre_region : "Region no disponible"} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Distrito:</b> {cliente.id_distrito.nombre_distrito} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Usuario:</b> {cliente.id_usuario.nombre} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Estado Civil:</b> {cliente.id_estadocivil.tipo_de_estado} </Typography>

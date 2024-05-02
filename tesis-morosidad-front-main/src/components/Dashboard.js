@@ -550,7 +550,8 @@ export default function Dashboard(){
       }));
       const filteredData = data.filter((item) => item !== undefined);
   
-      console.log(filteredData, 'gggggggggggggg')
+      console.log(filteredData, 'gggggggggggggg');
+      setCountDistrito(filteredData);
   
       const data2 = await Promise.all(dataEstadoCivil.map(async (e) => {
           const id = e.tipo_de_estado;
