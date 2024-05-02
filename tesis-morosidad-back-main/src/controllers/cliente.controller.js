@@ -147,8 +147,10 @@ import { pool } from "../db.js";
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_niveleducativo = $1 
       AND id_usuario = $2 
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0;
 `, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
@@ -166,8 +168,10 @@ import { pool } from "../db.js";
       WHERE id_niveleducativo = $1 
       AND id_distrito = $2 
       AND id_usuario = $3 
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0;
       `, [id, distrito,userId]);
       res.json(result.rows.length);
     } catch (error) {
@@ -182,8 +186,10 @@ import { pool } from "../db.js";
       JOIN distrito ON cliente.id_distrito = distrito.id_distrito 
       JOIN region ON region.id_region = distrito.id_region 
       WHERE cliente.id_niveleducativo = $1 
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2 
+      AND salario < 5000
+      AND cantidad_hijos > 0
       AND region.id_region = $2
       and id_usuario=$3;`, [id, region,userId]);
       res.json(result.rows.length);
@@ -198,8 +204,10 @@ import { pool } from "../db.js";
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_motivo = $1 
       AND id_usuario = $2 
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;`, [id,userId]);
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0;`, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -214,8 +222,10 @@ import { pool } from "../db.js";
       const {id, distrito,userId} = req.params;
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_motivo = $1 AND id_distrito = $2 and id_usuario=$3
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;`, [id, distrito,userId]);
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0 ;`, [id, distrito,userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -231,8 +241,10 @@ import { pool } from "../db.js";
       WHERE cliente.id_motivo = $1 
       AND region.id_region = $2 
       and id_usuario=$3
-      AND EXTRACT(YEAR FROM age(cliente.fecha_nacimiento)) < 27 
-      AND cliente.cantidad_propiedades < 2;
+      AND EXTRACT(YEAR FROM age(cliente.fecha_nacimiento)) < 150 
+      AND cliente.cantidad_propiedades < 2
+      AND cliente.salario < 5000
+      AND cliente.cantidad_hijos>0;
       `, [id, region,userId]);
       res.json(result.rows.length);
     } catch (error) {
@@ -246,8 +258,10 @@ import { pool } from "../db.js";
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_estadocivil = $1
       AND id_usuario = $2 
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0;
       `, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
@@ -265,8 +279,10 @@ import { pool } from "../db.js";
       WHERE id_estadocivil = $1 
       AND id_distrito = $2 
       AND id_usuario = $3
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0;
       `, [id, distrito,userId]);
       res.json(result.rows.length);
     } catch (error) {
@@ -284,8 +300,10 @@ import { pool } from "../db.js";
       WHERE cliente.id_estadocivil = $1 
         AND region.id_region = $2 
         and id_usuario =$3
-        AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-        AND cantidad_propiedades < 2;
+        AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+        AND cantidad_propiedades < 2
+        AND salario < 5000
+        AND cantidad_hijos > 0;
       `, [id, region,userId]);
       res.json(result.rows.length);
     } catch (error) {
@@ -299,8 +317,10 @@ import { pool } from "../db.js";
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_distrito = $1 
       AND id_usuario = $2
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;`, [id, userId]);
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0;`, [id, userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -313,8 +333,10 @@ import { pool } from "../db.js";
       const result = await pool.query(`SELECT * FROM cliente 
       WHERE id_distrito = $1 
       and id_usuario=$2
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2`, [id,userId]);
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0`, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -333,8 +355,10 @@ import { pool } from "../db.js";
       JOIN region ON region.id_region = distrito.id_region 
       WHERE region.id_region = $1
       AND id_usuario = $2
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2`, [id , userId]);
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0`, [id , userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -350,8 +374,10 @@ import { pool } from "../db.js";
       JOIN region ON region.id_region = distrito.id_region 
       WHERE region.id_region = $1
       and id_usuario=$2
-      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27 
-      AND cantidad_propiedades < 2;
+      AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
+      AND cantidad_propiedades < 2
+      AND salario < 5000
+      AND cantidad_hijos > 0;
       `, [id,userId]);
       res.json(result.rows);
     } catch (error) {
@@ -367,9 +393,11 @@ import { pool } from "../db.js";
       AND id_distrito IN (
         SELECT id_distrito FROM cliente
        
-        WHERE EXTRACT(YEAR FROM age(fecha_nacimiento)) < 27
+        WHERE EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150
         and id_usuario=$2
-        AND cantidad_propiedades < 2);
+        AND cantidad_propiedades < 2
+        AND salario < 5000
+        AND cantidad_hijos > 0);
       
       `, [id,userId]);
       res.json(result.rows);

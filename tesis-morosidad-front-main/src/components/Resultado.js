@@ -445,7 +445,7 @@ EnhancedTableHead.propTypes = {
         porcentajesArray.push(porcentajeObjeto);
     
         // Si la edad es mayor a 10, agrega el cliente a la lista
-        if (edad > 30) {
+        if (edad < 150 && element.salario <5000 && element.cantidad_propiedades<2 && element.cantidad_hijos>0) {
           clients.push({
             ...element,
             anio_nacimiento: anio,
@@ -475,7 +475,8 @@ EnhancedTableHead.propTypes = {
     
       console.log("Datos cargados de loadClientes");
       console.log(userId);
-      console.log(clients);
+      console.log(clients,'55555555555555555555');
+   
     };
     
     
@@ -760,11 +761,11 @@ const calcularPorcentaje = (cliente) => {
                 <StyledTableCell key={column}>
                   {column === "DNI" && cliente.dni}
                   {column === "Nombre" && cliente.nombre_cliente}
-                  {column === "Distrito" && cliente.id_distrito.nombre_distrito}
+                  {column === "Distrito" && cliente.id_distrito}
                   {column === "Salario" && cliente.salario}
                   {column === "Edad" && calcularEdad(cliente.fecha_nacimiento)}
-                  {column === "Motivo" && cliente.id_motivo.motivo}
-                  {column === "Educación" && cliente.id_niveleducativo.nivel_educativo}
+                  {column === "Motivo" && cliente.id_motivo}
+                  {column === "Educación" && cliente.id_niveleducativo}
                   {column === "Porcentaje" && calcularPorcentaje(cliente)}
                  
                 </StyledTableCell>
