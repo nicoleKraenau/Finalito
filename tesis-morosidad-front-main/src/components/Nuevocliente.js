@@ -27,7 +27,7 @@ export default function NuevoCliente() {
    fecha_nacimiento: "",
    cantidad_propiedades: "",
    cantidad_hijos: "",
-   genero: true,
+   genero: null,
    id_distrito: null,
    id_usuario: userId,
    id_estadocivil: null,
@@ -272,9 +272,9 @@ export default function NuevoCliente() {
       }
       return cliente.dni === task.dni && cliente.id !== userId; // Check if DNI exists for another client
     });
-  
+
     const edad = calcularEdad(task.fecha_nacimiento);
-  
+
     if (task.dni.length !== 8) {
       setAlert("El DNI no es de 8 dígitos. Intente de nuevo");
       handleOpen();
@@ -283,6 +283,42 @@ export default function NuevoCliente() {
       handleOpen();
     } else if (!editing && dniDuplicado) { // Check if adding a new client and DNI already exists for another client
       setAlert("El DNI ya se ha registrado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.nombre_cliente=="") {
+      setAlert("El campo 'Nombre' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.cantidad_propiedades=="") {
+      setAlert("El campo 'Cantidad Propiedades' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.cantidad_hijos=="") {
+      setAlert("El campo 'Cantidad Hijos' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.deudas=="") {
+      setAlert("El campo 'Deudas' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.salario=="") {
+      setAlert("El campo 'Salario' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.DNI=="") {
+      setAlert("El campo 'DNI' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.id_distrito==null) {
+      setAlert("El campo 'Distrito' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.id_estadocivil==null) {
+      setAlert("El campo 'Estado Civil' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.id_motivo==null) {
+      setAlert("El campo 'Motivo' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.id_niveleducativo==null) {
+      setAlert("El campo 'Nivel Educativo' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.fecha_nacimiento=="") {
+      setAlert("El campo 'Fecha de Nacimiento' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.genero==null) {
+      setAlert("El campo 'Genero' no está seleccionado. Intente de nuevo.");
       handleOpen();
     } else {
       try {
@@ -347,7 +383,43 @@ export default function NuevoCliente() {
       // Si no estamos en modo de edición y el DNI está duplicado con otro cliente que no es el actual
       setAlert("El DNI ya se ha registrado para otro cliente. Intente de nuevo.");
       handleOpen();
-    }else {
+    }else if (task.nombre_cliente=="") {
+      setAlert("El campo 'Nombre' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.cantidad_propiedades=="") {
+      setAlert("El campo 'Cantidad Propiedades' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.cantidad_hijos=="") {
+      setAlert("El campo 'Cantidad Hijos' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.deudas=="") {
+      setAlert("El campo 'Deudas' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.salario=="") {
+      setAlert("El campo 'Salario' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.DNI=="") {
+      setAlert("El campo 'DNI' está vacío. Intente de nuevo.");
+      handleOpen();
+    } else if (task.id_distrito==null) {
+      setAlert("El campo 'Distrito' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.id_estadocivil==null) {
+      setAlert("El campo 'Estado Civil' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.id_motivo==null) {
+      setAlert("El campo 'Motivo' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.id_niveleducativo==null) {
+      setAlert("El campo 'Nivel Educativo' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.fecha_nacimiento=="") {
+      setAlert("El campo 'Fecha de Nacimiento' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.genero==null) {
+      setAlert("El campo 'Genero' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else {
       try {
         if (editing) {
           const response = await fetch(`http://localhost:4000/api/cliente/${params.id}`, {
