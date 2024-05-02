@@ -149,8 +149,7 @@ import { pool } from "../db.js";
       AND id_usuario = $2 
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
-      AND salario < 5000
-      AND cantidad_hijos > 0;
+      AND salario < 5000;
 `, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
@@ -171,7 +170,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
       AND salario < 5000
-      AND cantidad_hijos > 0;
+     ;
       `, [id, distrito,userId]);
       res.json(result.rows.length);
     } catch (error) {
@@ -189,7 +188,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2 
       AND salario < 5000
-      AND cantidad_hijos > 0
+      
       AND region.id_region = $2
       and id_usuario=$3;`, [id, region,userId]);
       res.json(result.rows.length);
@@ -207,7 +206,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
       AND salario < 5000
-      AND cantidad_hijos > 0;`, [id,userId]);
+      ;`, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -225,7 +224,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
       AND salario < 5000
-      AND cantidad_hijos > 0 ;`, [id, distrito,userId]);
+       ;`, [id, distrito,userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -261,7 +260,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
       AND salario < 5000
-      AND cantidad_hijos > 0;
+      ;
       `, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
@@ -282,7 +281,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
       AND salario < 5000
-      AND cantidad_hijos > 0;
+      ;
       `, [id, distrito,userId]);
       res.json(result.rows.length);
     } catch (error) {
@@ -303,7 +302,7 @@ import { pool } from "../db.js";
         AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
         AND cantidad_propiedades < 2
         AND salario < 5000
-        AND cantidad_hijos > 0;
+        ;
       `, [id, region,userId]);
       res.json(result.rows.length);
     } catch (error) {
@@ -320,7 +319,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
       AND salario < 5000
-      AND cantidad_hijos > 0;`, [id, userId]);
+      ;`, [id, userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -336,7 +335,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
       AND salario < 5000
-      AND cantidad_hijos > 0`, [id,userId]);
+      `, [id,userId]);
       if(result.rows.length === 0 ) return res.status(404).json({
         message: "Cliente no encontrado"
       })
@@ -358,7 +357,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
       AND salario < 5000
-      AND cantidad_hijos > 0`, [id , userId]);
+      `, [id , userId]);
       res.json(result.rows.length);
     } catch (error) {
       next(error);
@@ -377,7 +376,7 @@ import { pool } from "../db.js";
       AND EXTRACT(YEAR FROM age(fecha_nacimiento)) < 150 
       AND cantidad_propiedades < 2
       AND salario < 5000
-      AND cantidad_hijos > 0;
+      ;
       `, [id,userId]);
       res.json(result.rows);
     } catch (error) {
@@ -397,7 +396,7 @@ import { pool } from "../db.js";
         and id_usuario=$2
         AND cantidad_propiedades < 2
         AND salario < 5000
-        AND cantidad_hijos > 0);
+        );
       
       `, [id,userId]);
       res.json(result.rows);

@@ -765,7 +765,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
     
       // Filtrar los clientes que tienen más de 27 años
       const morosos = clientes.filter((cliente) => {
-        return calcularEdad(cliente.fecha_nacimiento) < 150 && cliente.salario<5000 && cliente.cantidad_propiedades<2&& cliente.cantidad_hijos>0;
+        return calcularEdad(cliente.fecha_nacimiento) < 150 && cliente.salario<5000 && cliente.cantidad_propiedades<2;
       });
     
       // Devolver el número de clientes que cumplen con el criterio
@@ -788,7 +788,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
     const filteredClients = top5clientes.filter(cliente => {
       const clienteFechaNacimiento = new Date(cliente.fecha_nacimiento);
       const clienteEdad = Math.floor((new Date() - clienteFechaNacimiento) / 31557600000); // Calcula la edad en años
-      return clienteEdad < 150 && cliente.deudas > 0 && cliente.salario<5000 && cliente.cantidad_propiedades<2&& cliente.cantidad_hijos>0;
+      return clienteEdad < 150 && cliente.deudas > 0 && cliente.salario<5000 && cliente.cantidad_propiedades<2;
     });
   
 

@@ -445,7 +445,7 @@ EnhancedTableHead.propTypes = {
         porcentajesArray.push(porcentajeObjeto);
     
         // Si la edad es mayor a 10, agrega el cliente a la lista
-        if (edad < 150 && element.salario <5000 && element.cantidad_propiedades<2 && element.cantidad_hijos>0) {
+        if (edad < 150 && element.salario <5000 && element.cantidad_propiedades<2 ) {
           clients.push({
             ...element,
             anio_nacimiento: anio,
