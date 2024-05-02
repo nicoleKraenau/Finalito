@@ -18,6 +18,7 @@ export default function NuevoCliente() {
   const [dataRegion, setDataRegion] = useState([]);
   const [dataMotivo, setDataMotivo] = useState([]);
   const [dataClientes, setClientes] = useState([]);
+  const [laregion, setLaregion] = useState();
   const [store, dispatch] = useContext (StoreContext)
   const { user } = store;
   const [userId, setUserId] = useState('');
@@ -302,6 +303,9 @@ export default function NuevoCliente() {
     } else if (task.DNI=="") {
       setAlert("El campo 'DNI' está vacío. Intente de nuevo.");
       handleOpen();
+    } else if (laregion==null) {
+      setAlert("El campo 'Region' no está seleccionado. Intente de nuevo.");
+      handleOpen();
     } else if (task.id_distrito==null) {
       setAlert("El campo 'Distrito' no está seleccionado. Intente de nuevo.");
       handleOpen();
@@ -401,6 +405,9 @@ export default function NuevoCliente() {
     } else if (task.DNI=="") {
       setAlert("El campo 'DNI' está vacío. Intente de nuevo.");
       handleOpen();
+    } else if (laregion==null) {
+      setAlert("El campo 'Region' no está seleccionado. Intente de nuevo.");
+      handleOpen();
     } else if (task.id_distrito==null) {
       setAlert("El campo 'Distrito' no está seleccionado. Intente de nuevo.");
       handleOpen();
@@ -465,7 +472,21 @@ export default function NuevoCliente() {
     }
   };
   
-  
+  const distritosporRegion = async (e) => {
+      
+    if(e!=null){
+      const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + '/alldistritosporregion/' + e.id_region);
+      const distritos = await responseDistritobyRegion.json();
+      setDataDistrito(distritos);
+      setLaregion(e.nombre_region); 
+    } else {
+      const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + '/distrito');
+      const distritos = await responseDistritobyRegion.json();
+      setDataDistrito(distritos);
+      setLaregion(null); 
+    }
+  }
+      
   
   const handleUserIdChange = (event) => {
     setTask({ ...task, id_usuario: event.target.value });
@@ -503,6 +524,15 @@ export default function NuevoCliente() {
               </Grid>
               <Grid item xs={6}>
                 <TextField onChange={handlenumChange} fullWidth name="dni" id="filled-basic1" label="DNI" variant="filled" value={task.dni} sx={{ marginBottom:'2rem'}}/>
+                <Autocomplete
+                  onChange={(event, newValue) => { distritosporRegion(newValue) }}
+                  options={dataRegion || []}
+                  getOptionLabel={(option) => option.nombre_region}
+                  renderInput={(params) => ( <TextField {...params} label="Region" variant="outlined" fullWidth /> )}
+                  getOptionSelected={(option, value) => option.nombre_region === value.nombre_region} sx={{ marginBottom:'2rem'}}
+                  disabled={!dataLoaded} // Deshabilita el Autocomplete mientras los datos se cargan
+                  />
+                
                 <Autocomplete value={task.id_distrito}
                   onChange={(event, newValue) => { setTask({ ...task, id_distrito: newValue }); }}
                   options={dataDistrito || []}

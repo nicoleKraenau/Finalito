@@ -548,10 +548,11 @@ export default function Dashboard(){
               }
           }
       }));
+      console.log(data);
       const filteredData = data.filter((item) => item !== undefined);
-  
-      console.log(filteredData, 'gggggggggggggg');
-      setCountDistrito(filteredData);
+      const filteredData2 = filteredData.filter((item) => item.value > 0);
+      console.log(filteredData2, 'gggggggggggggg');
+      setCountDistrito(filteredData2);
   
       const data2 = await Promise.all(dataEstadoCivil.map(async (e) => {
           const id = e.tipo_de_estado;
