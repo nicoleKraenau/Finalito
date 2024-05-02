@@ -80,6 +80,7 @@ const CrearCuenta = () =>{
                   body: JSON.stringify(task),
               });
               const data = await response.json();
+              navigate('/login');
           } else {
               setAlert("El correo ya ha sido registrado. Intente con otro.");
               setOpen(true);

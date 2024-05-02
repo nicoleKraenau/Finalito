@@ -791,7 +791,7 @@ const calcularPorcentaje = (cliente) => {
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Deudas:</b> {cliente.deudas} </Typography>
             </Grid>
             <Grid item xs={6}> 
-              <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Region:</b> {dataRegion[cliente.id_distrito.id_region-1] ? dataRegion[cliente.id_distrito.id_region-1].nombre_region : "Region no disponible"} </Typography>
+              <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Region:</b> {dataRegion[cliente.id_distrito.id_region-1] ? dataRegion[cliente.id_distrito.id_region-1] .nombre_region : "Region no disponible"} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Distrito:</b> {cliente.id_distrito.nombre_distrito} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Usuario:</b> {cliente.id_usuario.nombre_usuario} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Estado Civil:</b> {cliente.id_estadocivil.tipo_de_estado} </Typography>

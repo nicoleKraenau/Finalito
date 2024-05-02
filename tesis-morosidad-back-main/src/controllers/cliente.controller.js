@@ -405,6 +405,16 @@ import { pool } from "../db.js";
     }
   }; 
 
+  export const getAllDistritosbyRegion = async (req, res, next) => {
+    try {
+      const {id} = req.params;
+      const result = await pool.query(`SELECT * FROM distrito WHERE id_region = $1`, [id]);
+      res.json(result.rows);
+    } catch (error) {
+      next(error);
+    }
+  }; 
+
   export const getClientsbyDNI = async (req, res, next) => {
     try {
       const {id,userId} = req.params;

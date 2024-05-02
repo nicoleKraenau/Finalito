@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createusuario, dataCorreos, login, setDatosUsuario, updateusuario,getusuario} from "../controllers/task.controllers.js"
-import { getCliente, updateCliente, getClientsbyDNI, getAllClientes, getAlldistritos,getAllregion,getAlleducativo,getAllestado,getAllmotivo, deleteCliente, deleteClientes, createcliente, getAllusuario, getDistrito, getRegion, getEstado, getEducativo, getMotivo, deleteAllClientes, getClientesbyNivelEducativo, getClientesbyMotivo, getClientesbyEstadoCivil, getClientesbyDistrito, getClientesbyRegion, getClientesbyMotivoDistrito, getClientesbyNivelEducativoDistrito, getClientesbyEstadoCivilDistrito, getClientesbyNivelEducativoRegion, getClientesbyMotivoRegion, getClientesbyEstadoCivilRegion, getDistritosbyRegion, getAllClientesbyRegion, getAllClientesbyDistrito, createcliente1, getClientsbyDNIigual} from "../controllers/cliente.controller.js"
+import { getCliente, updateCliente, getClientsbyDNI, getAllClientes, getAlldistritos,getAllregion,getAlleducativo,getAllestado,getAllmotivo, deleteCliente, deleteClientes, createcliente, getAllusuario, getDistrito, getRegion, getEstado, getEducativo, getMotivo, deleteAllClientes, getClientesbyNivelEducativo, getClientesbyMotivo, getClientesbyEstadoCivil, getClientesbyDistrito, getClientesbyRegion, getClientesbyMotivoDistrito, getClientesbyNivelEducativoDistrito, getClientesbyEstadoCivilDistrito, getClientesbyNivelEducativoRegion, getClientesbyMotivoRegion, getClientesbyEstadoCivilRegion, getDistritosbyRegion, getAllClientesbyRegion, getAllClientesbyDistrito, createcliente1, getClientsbyDNIigual, getAllDistritosbyRegion} from "../controllers/cliente.controller.js"
 const router=Router();
 
 router.post('/registrousuario',createusuario)
@@ -39,6 +39,7 @@ router.get('/allclientespordistrito/:id/:userId',getAllClientesbyDistrito)
 router.get('/clientesporregion/:id/:userId',getClientesbyRegion)
 router.get('/allclientesporregion/:id/:userId',getAllClientesbyRegion)
 router.get('/distritosporregion/:id/:userId' ,getDistritosbyRegion)
+router.get('/alldistritosporregion/:id' ,getAllDistritosbyRegion)
 router.get('/cliente/:id',getCliente)
 router.put('/cliente/:id',updateCliente)
 router.delete('/cliente/:id',deleteCliente)
