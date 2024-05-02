@@ -763,11 +763,11 @@ const calcularPorcentaje = (cliente) => {
                 <StyledTableCell key={column}>
                   {column === "DNI" && cliente.dni}
                   {column === "Nombre" && cliente.nombre_cliente}
-                  {column === "Distrito" && cliente.id_distrito}
+                  {column === "Distrito" && cliente.id_distrito.nombre_distrito}
                   {column === "Salario" && cliente.salario}
                   {column === "Edad" && calcularEdad(cliente.fecha_nacimiento)}
-                  {column === "Motivo" && cliente.id_motivo}
-                  {column === "Educación" && cliente.id_niveleducativo}
+                  {column === "Motivo" && cliente.id_motivo.motivo}
+                  {column === "Educación" && cliente.id_niveleducativo.nivel_educativo}
                   {column === "Porcentaje" && calcularPorcentaje(cliente)}
                  
                 </StyledTableCell>
