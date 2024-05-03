@@ -497,6 +497,10 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
           setOpen(true);
           return; // Detiene la ejecución de la función si el valor es vacío
       }
+      else{
+        setAlert("Proceso predictivo completo");
+        setOpen(true);
+      }
   
       // Actualiza el estado local de pbi con el nuevo valor
       setPBI(newValue);
@@ -607,6 +611,7 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
               </div>
               </Grid>
               <Grid item xs={9}>
+              
                 <TableContainer component={Paper}>
                   <Table sx={{ minWidth: 700 }} aria-label="customized table">
                     <TableHead>
@@ -621,6 +626,15 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
                       </TableRow>
                     </TableHead>
                     <TableBody>
+                    {clientes.length === 0 && (
+        <TableRow>
+            <TableCell colSpan={7} align="center">
+                <Typography variant="body1">No hay registros.</Typography>
+            </TableCell>
+        </TableRow>
+    )}
+
+                    
                       {clientes.map((cliente) => (
                         <StyledTableRow key={cliente.id_cliente}>
                           <StyledTableCell component="th" scope="row"> {cliente.dni} </StyledTableCell>
@@ -653,6 +667,7 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
                     </TableBody>
                   </Table>
                 </TableContainer>
+                 
               </Grid>
             </Grid>
           </Container>

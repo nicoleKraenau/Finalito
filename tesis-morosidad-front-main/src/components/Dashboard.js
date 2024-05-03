@@ -773,6 +773,33 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
       // Devolver el número de clientes que cumplen con el criterio
       return morosos.length;
     };
+    const salariomorosos = () => {
+      if (!Array.isArray(clientes) || clientes.length === 0) {
+          return "No hay datos";
+      }
+  
+      // Filtrar los clientes que tienen más de 27 años y cumplen con las condiciones
+      const morososFiltrados = clientes.filter((cliente) => {
+          return calcularEdad(cliente.fecha_nacimiento) < 150 && cliente.salario < 5000 && cliente.cantidad_propiedades < 2;
+      });
+  
+      // Si no hay morosos, retornar 0 para el promedio de salario
+      if (morososFiltrados.length === 0) {
+          return 0;
+      }
+  
+      // Sumar todos los salarios de los morosos
+      const sumaSalarios = morososFiltrados.reduce((total, cliente) => {
+          return total + parseFloat(cliente.salario);
+      }, 0);
+  
+      // Calcular el promedio dividiendo la suma de salarios entre el número de morosos
+      const promedioSalarios = sumaSalarios / morososFiltrados.length;
+  
+      // Devolver el promedio de salarios
+      return promedioSalarios;
+  };
+  
     const nomorosos = () => {
       if (!Array.isArray(clientes)) {
         return "No hay datos";
@@ -913,17 +940,20 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                   </Grid>
                   <Grid item xs={12} md={6} sx={{marginTop:'3rem', padding:'.5rem'}}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={22} md={26}>
                         <CardsHeader titulo="Edad Promedio" texto={edadPromedio()} color="#F85032" font="white"/>
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={22} md={26}>
                       
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={22} md={26}>
                         <CardsHeader titulo="Clientes morosos" texto={morosos()} color="#F85032" font="white"/>
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={22} md={26}>
                         <CardsHeader titulo="Clientes no morosos" texto={nomorosos()}  color="#F85032" font="white"/>
+                      </Grid>
+                      <Grid item xs={22} md={26}>
+                        <CardsHeader titulo="Salario Promedio" texto={salariomorosos()} color="#F85032" font="white"/>
                       </Grid>
                     </Grid>
                   </Grid>

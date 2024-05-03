@@ -835,13 +835,13 @@ const calcularPorcentaje = (cliente) => {
   }}
 >
   Aprobar solicitud</Button>
-  <StyledTableCell ><Button color='error' onClick={() => handleOpenDelete(cliente.id_cliente)}> Eliminar </Button></StyledTableCell>
+  <StyledTableCell ><Button color='error' onClick={() => handleOpenDelete(cliente.id_cliente)}> Rechazar</Button></StyledTableCell>
   <Modal
     open={openDelete[cliente.id_cliente] || false}
                             onClose={() => handleCloseDelete(cliente.id_cliente)}
                             >
                               <Box sx={style}>
-                                <Typography variant="h6" component="div" style={{textAlign:'center'}}> ¿Desea eliminar {cliente.genero? "al cliente" : "a la clienta"} {cliente.nombre_cliente}? </Typography>
+                                <Typography variant="h6" component="div" style={{textAlign:'center'}}> ¿Desea rechazar {cliente.genero? "al cliente" : "a la clienta"} {cliente.nombre_cliente}? </Typography>
                                 <Grid container spacing={2} sx={{marginTop:'2rem'}}>
                                   <Grid item xs={6}>
                                     <Button fullWidth variant='contained' color='success' onClick={() => handleDelete(cliente.id_cliente)}> Sí </Button>
