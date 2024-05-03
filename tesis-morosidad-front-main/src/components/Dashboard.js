@@ -735,7 +735,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
     }
     
     const loadClientes = async () => {
-      const response =  await fetch(`http://localhost:4000/api/clientes/${userId}`)
+      const response =  await fetch(process.env.REACT_APP_API_URL + '/clientes/'+ userId)
       const data = await response.json();
       setClientes(data);
       const dataordenada = data.sort((a, b) => b.deudas - a.deudas);

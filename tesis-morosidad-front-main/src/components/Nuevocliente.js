@@ -114,7 +114,7 @@ export default function NuevoCliente() {
         .catch((error) => console.error('Error al cargar datos de motivo:', error));
 
       // Carga los datos de los clientes
-      const clientePromise = fetch(`http://localhost:4000/api/clientes/${userId}`) // Reemplaza con la ruta correcta
+      const clientePromise = fetch(process.env.REACT_APP_API_URL + '/clientes/'+ userId) // Reemplaza con la ruta correcta
        .then((response) => response.json())
        .then((data) => setClientes(data))
        .catch((error) => console.error('Error al cargar datos de los clientes:', error));
@@ -139,7 +139,7 @@ export default function NuevoCliente() {
         await new Promise((resolve) => setTimeout(resolve, 100)); // Espera 100ms y vuelve a verificar
       }
       console.log('Antes de la solicitud fetch');
-      const res = await fetch(`http://localhost:4000/api/cliente/${id}`);
+      const res = await fetch(process.env.REACT_APP_API_URL + "/cliente/"+ id);
       const data = await res.json();      
 
       // Crear un objeto de fecha a partir de la cadena
@@ -328,7 +328,7 @@ export default function NuevoCliente() {
     } else {
       try {
         if (editing) {
-          const response = await fetch(`http://localhost:4000/api/cliente/${params.id}`, {
+          const response = await fetch(process.env.REACT_APP_API_URL + "/cliente/"+ params.id, {
             method:'PUT',
             headers:{'Content-Type': 'application/json'},
             body: JSON.stringify(task)
@@ -340,7 +340,7 @@ export default function NuevoCliente() {
             console.error("Error al actualizar el cliente");
           }
         } else {
-          const response = await fetch(`http://localhost:4000/api/clients/${task.dni}/${userId}`);
+          const response = await fetch(process.env.REACT_APP_API_URL + "/clients/"+ task.dni +"/"+userId);
           if (response.ok) { // Check if DNI already exists for another client
             setAlert("El DNI ya se ha registrado. Intente de nuevo");
             handleOpen();
@@ -350,7 +350,7 @@ export default function NuevoCliente() {
               ...task, 
               id_usuario: { id_usuario: userId } 
             };
-            const response = await fetch(`http://localhost:4000/api/cliente`, {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/cliente', {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(updatedTask),
@@ -430,7 +430,7 @@ export default function NuevoCliente() {
     } else {
       try {
         if (editing) {
-          const response = await fetch(`http://localhost:4000/api/cliente/${params.id}`, {
+          const response = await fetch(process.env.REACT_APP_API_URL + "/cliente/"+ params.id, {
             method:'PUT',
             headers:{'Content-Type': 'application/json'},
             body: JSON.stringify(task)
@@ -442,7 +442,7 @@ export default function NuevoCliente() {
             console.error("Error al actualizar el cliente");
           }
         } else {
-          const response = await fetch(`http://localhost:4000/api/clientsf/${task.dni}/${userId}`);
+          const response = await fetch(process.env.REACT_APP_API_URL + "/clientsf/"+ task.dni+"/"+userId);
           if (response.ok) { // Check if DNI already exists for another client
             setAlert("El DNI ya se ha registrado. Intente de nuevo");
             handleOpen();
@@ -452,7 +452,7 @@ export default function NuevoCliente() {
               ...task, 
               id_usuario: { id_usuario: userId } 
             };
-            const response = await fetch(`http://localhost:4000/api/cliente`, {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/cliente', {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(updatedTask),
