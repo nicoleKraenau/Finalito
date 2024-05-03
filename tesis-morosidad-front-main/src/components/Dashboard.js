@@ -787,13 +787,14 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
       return morosos.length;
     };
     
-    const filteredClients = top5clientes.filter(cliente => {
+    const filteredClients = Array.isArray(clientes) ? clientes.filter(cliente => {
       const clienteFechaNacimiento = new Date(cliente.fecha_nacimiento);
       const clienteEdad = Math.floor((new Date() - clienteFechaNacimiento) / 31557600000); // Calcula la edad en años
       return clienteEdad < 150 && cliente.deudas > 0 && cliente.salario<5000 && cliente.cantidad_propiedades<2;
-    });
+    }) : [];
+    
+    
   
-
     const restablecer = () => {
       if(distrito !== ""){ setDistrito("");}
       if(region !== ""){setRegion("");

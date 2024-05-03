@@ -8,7 +8,7 @@ const CrearCuenta = () =>{
 
         const [alert, setAlert] = useState('');
         const [task, setTask] = useState({
-          nombre: "",
+          nombre_usuario: "",
           email: "",
           contrasena: "",
         });

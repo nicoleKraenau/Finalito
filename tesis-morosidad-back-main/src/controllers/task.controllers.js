@@ -11,12 +11,12 @@ export const createusuario = async (req, res, next) => {
   console.log('holaeee'); // Registro al comienzo de la función
 
   try {
-    const { nombre, email, contrasena } = req.body; 
+    const { nombre_usuario, email, contrasena } = req.body; 
 
-    console.log('Datos de la solicitud:', { nombre, email }); // Registro de datos recibidos
+    console.log('Datos de la solicitud:', { nombre_usuario, email,contrasena }); // Registro de datos recibidos
 
-    const nuevousuario = await pool.query("INSERT INTO usuario(nombre, email, contrasena) VALUES($1, $2, $3) RETURNING *", [
-      nombre,
+    const nuevousuario = await pool.query("INSERT INTO usuario(nombre_usuario, email, contrasena) VALUES($1, $2, $3) RETURNING *", [
+      nombre_usuario,
       email,
       contrasena
     ]);

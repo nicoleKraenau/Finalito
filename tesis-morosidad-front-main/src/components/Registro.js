@@ -197,24 +197,31 @@ export default function Registro(){
 
     // Supongamos que tienes una función que carga y procesa el archivo CSV
     async function processCSVFile(file) {
-      console.log('2')
+      console.log('2');
       try {
-        console.log('a')
-        // Lee el archivo CSV y conviértelo en un array de objetos
-        const csvData = await readFile(file);
-        // Pasar el csvData a dataImport para cambiar los tipos de datos de los campos del cliente
-        const changedData = changeDataType(csvData);
-        
-        // Realiza la consulta a la base de datos PostgreSQL con los datos del CSV
-        changedData.forEach(async (e)=>{
-          await uploadCSVDataToServer(e);
-        });
-    
-        console.log('Consulta a la base de datos completada.');
+          console.log('a');
+          // Lee el archivo CSV y conviértelo en un array de objetos
+          const csvData = await readFile(file);
+          // Verifica si csvData tiene contenido
+          console.log('CSV Data:', csvData);
+          if (!csvData) {
+              console.error('El contenido del archivo CSV está vacío.');
+              return;
+          }
+  
+          // Pasar el csvData a changeDataType para cambiar los tipos de datos de los campos del cliente
+          const changedData = changeDataType(csvData);
+  
+          // Realiza la consulta a la base de datos PostgreSQL con los datos del CSV
+          changedData.forEach(async (e) => {
+              await uploadCSVDataToServer(e);
+          });
+  
+          console.log('Consulta a la base de datos completada.');
       } catch (error) {
-        console.error('Error al procesar el archivo CSV o realizar la consulta a la base de datos:', error);
+          console.error('Error al procesar el archivo CSV o realizar la consulta a la base de datos:', error);
       }
-    }
+  }
 
     // Función para leer el archivo CSV y convertirlo en un array de objetos
     function readFile(file) {
@@ -244,56 +251,78 @@ export default function Registro(){
       
       const clients = []
       console.log('CSV Data:', csvData);
-      const allFieldsEmpty = Object.values(clients).every(value => value === undefined || value === "");
-   
-      if (allFieldsEmpty) {
-        // Mostrar alerta si todos los campos están vacíos
-    setAlertOpen2(true);
-        setTimeout(() => {
+  
 
-          setAlertOpen2(false);
-         // window.location.reload();
-        }, 2000); // Cerrar la alerta después de 3 segundos
-       
-        return;
-      }
+      const allFieldsEmpty = Object.values(clients).every(value => value === undefined || value === "");
+      clients.id_usuario = userId;
+      
+    
+
       csvData.forEach(e => {
       
         console.log('Elemento de CSV:', e);
         const fechaoriginal = e.fecha_nacimiento;
         const partes = fechaoriginal.split('/');
-        console.log('91')
+        console.log('91');
         const dia = partes[0];
         const mes = partes[1];
         const anio = partes[2];
         const userIdInt = parseInt(userId);
         const user = dataUsuario.find(user => user.id_usuario === userIdInt);
+        console.log('91');
         
+        console.log('91');
         console.log('hhhhhhhhhhhhh', user); 
-        console.log(userId)
-        console.log('9')
+    
+        console.log('hhhhhhhhhhhhh', user); 
+        console.log(userId);
+        console.log('9');
+        const genero1 = e.genero.toLowerCase() === "hombre" ? true : false;
+        console.log('9',e.id_motivo);
+        const motivoEncontrado = (dataMotivo.find(motivo_prestamo => motivo_prestamo.motivo === e.id_motivo).id_motivo);
+        
+        const nivelEncontrado = (dataNivelEducativo.find(nivel_educativo => nivel_educativo.nivel_educativo === e.id_niveleducativo).id_niveleducativo);
+        console.log('9');
+        const estadoEncontrado = (dataEstadoCivil.find(estado_civil => estado_civil.tipo_de_estado === e.id_estadocivil).id_estadocivil);
+        console.log('9');
+        const distritoEncontrado = (dataDistrito.find(distrito => distrito.nombre_distrito === e.id_distrito).id_distrito);
+        
+console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
         const client = {
           nombre_cliente: e.nombre_cliente,
           dni: e.dni,
           fecha_nacimiento: `${anio}-${mes}-${dia}`,
           cantidad_propiedades: e.cantidad_propiedades,
           cantidad_hijos: e.cantidad_hijos,
-          genero: JSON.parse(e.genero),
-          id_distrito: dataDistrito[e.id_distrito-1],
+          genero: genero1 ,
+          id_distrito:dataDistrito[distritoEncontrado-1],
           id_usuario:user,
-          id_estadocivil: dataEstadoCivil[e.id_estadocivil-1],
-          id_niveleducativo: dataNivelEducativo[e.id_niveleducativo-1],
+          id_estadocivil: dataEstadoCivil[estadoEncontrado-1],
+          id_niveleducativo: dataNivelEducativo[nivelEncontrado-1],
           salario: e.salario,
           deudas: e.deudas,
-          id_motivo: dataMotivo[e.id_motivo-1],
+          id_motivo: dataMotivo[motivoEncontrado-1],
+
          
-        }
+        };
+         clients.push(client,'jjjjjjjjjj');
+        console.log(client,'99999999999');
        
-    
+       // Verificar si algún campo del cliente es una cadena vacía o undefined
+  for (const key in client) {
+    if (client[key] === undefined || client[key] === "") {
+      // Mostrar alerta si algún campo del cliente es una cadena vacía o undefined
+      setAlertOpen2(true);
+      setTimeout(() => {
+        setAlertOpen2(false);
+      }, 2000); // Cerrar la alerta después de 2 segundos
+      return;
+    }
+  }
+       
+      
+       
         
-        
-        console.log('000')
-        clients.push(client,'jjjjjjjjjj'); 
         console.log(client,'99999999999');
       });
       console.log('fff')
@@ -516,9 +545,6 @@ export default function Registro(){
         <>
           <Navbar/>
           <Container>
-          <Typography variant='body1' sx={{ marginBottom:'2rem'}}>
-  El ID del usuario actual es: {userId}
-</Typography>
 
           <Box component='div' sx={{ textAlign: 'right', marginTop: '2rem' }}>
   <Typography variant="h6" display="inline" sx={{ marginRight: '.4rem' }}>PBI</Typography>
