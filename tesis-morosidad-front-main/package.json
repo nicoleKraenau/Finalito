@@ -26,10 +26,12 @@
     "reactstrap": "^9.2.2",
     "web-vitals": "^2.1.4"
   },
+  "proxy": "http://191.235.32.2",
   "scripts": {
     "start": "env-cmd -f src/env/.env.dev react-scripts start",
     "prod": "env-cmd -f src/env/.env.prod react-scripts start",
     "build": "react-scripts build",
+    "build:prod": "env-cmd -f src/env/.env.prod react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
