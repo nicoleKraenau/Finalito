@@ -4,7 +4,7 @@ import { getCliente, updateCliente, getClientsbyDNI, getAllClientes, getAlldistr
 const router=Router();
 
 router.post('/registrousuario',createusuario)
-router.put('/registrousuario1',login)
+router.post('/registrousuario1',login)
 router.get('/distrito',getAlldistritos)
 router.get('/distrito/:id',getDistrito)
 router.get('/region',getAllregion)
