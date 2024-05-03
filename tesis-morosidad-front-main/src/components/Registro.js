@@ -1,5 +1,7 @@
 import Navbar from './Navbar'
 import React, { useState, useEffect } from 'react';
+
+import MuiAlert from '@mui/material/Alert';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import{Typography, Snackbar, SnackbarContent,Button,TextField, Modal, Box,Alert, Grid,Table,TableBody,TableContainer,TableHead,TableRow,Paper,Container, Input, IconButton, Stack} from "@mui/material";
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -30,7 +32,9 @@ import Close from '@mui/icons-material/Close';
   }));
 
 export default function Registro(){
-
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertOpen1, setAlertOpen1] = useState(false);
+  const [alertOpen2, setAlertOpen2] = useState(false);
     // Define las variables de estado para los datos
     const [alert, setAlert] = useState('');
     const [dataLoaded, setDataLoaded] = useState(false);
@@ -87,13 +91,16 @@ export default function Registro(){
       };
 
       const [open, setOpen] = useState(false);
-
+      const [open1, setOpen1] = useState(false);
+      const [open2, setOpen2] = useState(false);
         const handleOpen= (clientIndex) => {
           setOpen(true);
+          setOpen1(true);
         };
 
         const handleClose = (clientIndex) => {
           setOpen(false);
+          setOpen1(false);
         };
         
         // Función para manejar el cambio en el valor de PBI
@@ -233,9 +240,25 @@ export default function Registro(){
     }
 
     function changeDataType(csvData){
+      console.log('hhhhhhh77uuuuuuuuuuuuuuuu')
+      
       const clients = []
       console.log('CSV Data:', csvData);
+      const allFieldsEmpty = Object.values(clients).every(value => value === undefined || value === "");
+   
+      if (allFieldsEmpty) {
+        // Mostrar alerta si todos los campos están vacíos
+    setAlertOpen2(true);
+        setTimeout(() => {
+
+          setAlertOpen2(false);
+         // window.location.reload();
+        }, 2000); // Cerrar la alerta después de 3 segundos
+       
+        return;
+      }
       csvData.forEach(e => {
+      
         console.log('Elemento de CSV:', e);
         const fechaoriginal = e.fecha_nacimiento;
         const partes = fechaoriginal.split('/');
@@ -255,7 +278,7 @@ export default function Registro(){
           fecha_nacimiento: `${anio}-${mes}-${dia}`,
           cantidad_propiedades: e.cantidad_propiedades,
           cantidad_hijos: e.cantidad_hijos,
-          genero: e.genero ,
+          genero: JSON.parse(e.genero),
           id_distrito: dataDistrito[e.id_distrito-1],
           id_usuario:user,
           id_estadocivil: dataEstadoCivil[e.id_estadocivil-1],
@@ -265,6 +288,10 @@ export default function Registro(){
           id_motivo: dataMotivo[e.id_motivo-1],
          
         }
+       
+    
+        
+        
         console.log('000')
         clients.push(client,'jjjjjjjjjj'); 
         console.log(client,'99999999999');
@@ -318,6 +345,18 @@ export default function Registro(){
     };
 
     const exportClients = async () => {
+      console.log('hhhhhhhuuuuuuuuuuuuuuuu')
+      if (clientes.length === 0) {
+       // setAlertOpen("El valor del PBI no puede estar vacío. Por favor, ingresa un valor válido.");
+        console.log('jjjj')
+        setAlertOpen(true);
+      
+        setTimeout(() => {
+          setAlertOpen(false);
+          
+        }, 3000); 
+        return;
+      }
       let clientstoExport = [];
           clientes.forEach(element => {
             const fecha = new Date(element.fecha_nacimiento);
@@ -440,9 +479,31 @@ export default function Registro(){
       localStorage.setItem('pbi', newValue);
   };
   
-    
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertOpen(false);
 
-    
+
+  };
+
+  const handleCloseAlert1 = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertOpen1(false);
+
+
+  };
+  const handleCloseAlert2 = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertOpen2(false);
+
+
+  };
 
    /* const handlePBIChange = (e) =>{
       const newValue = e.target.value;
@@ -469,8 +530,23 @@ export default function Registro(){
               <div>
                 <Stack spacing={4} orientation="vertical" fullWidth aria-label="vertical contained button group">
                     <Button variant="contained" key="uno" sx={{marginBottom:'2rem'}} onClick={exportClients}>Exportar</Button>
+                    <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleCloseAlert}>
+        <MuiAlert onClose={handleCloseAlert} severity="error" elevation={6} variant="filled">
+          No hay clientes registrados.
+        </MuiAlert>
+        </Snackbar>
                     <Input type="file" id='file-upload' accept=".csv" onChange={handleFileChange} sx={{display:'none'}}></Input> 
                     <label htmlFor="file-upload"><Button variant="contained" key="dos" fullWidth component="span">Importar</Button> </label>
+                    <Snackbar open={alertOpen1} autoHideDuration={6000} onClose={handleCloseAlert1}>
+        <MuiAlert onClose={handleCloseAlert1} severity="error" elevation={6} variant="filled">
+          Datos incompletos.
+        </MuiAlert>
+        </Snackbar>
+        <Snackbar open={alertOpen2} autoHideDuration={6000} onClose={handleCloseAlert2}>
+        <MuiAlert onClose={handleCloseAlert2} severity="error" elevation={6} variant="filled">
+         Datos incompletos.
+        </MuiAlert>
+        </Snackbar>
                     <Button variant="contained" key="tres" component={Link} sx={{marginBottom:'2rem'}} to="/agregarcliente" >Agregar</Button>
                     <Button variant="contained" key="cuatro" color='success' sx={{ marginBottom: '2rem' }} onClick={handleCalculate}>Calcular</Button>
                     <Button variant="contained" key="cinco" color='error' onClick={handleOpenDeleteAll}>Borrar todo</Button>

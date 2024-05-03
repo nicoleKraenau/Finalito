@@ -19,6 +19,7 @@ export default function NuevoCliente() {
   const [dataMotivo, setDataMotivo] = useState([]);
   const [dataClientes, setClientes] = useState([]);
   const [laregion, setLaregion] = useState();
+  const [alertOpen, setAlertOpen] = useState(false);
   const [store, dispatch] = useContext (StoreContext)
   const { user } = store;
   const [userId, setUserId] = useState('');
@@ -541,9 +542,7 @@ export default function NuevoCliente() {
                   getOptionSelected={(option, value) => option.nombre_distrito === value.nombre_distrito} sx={{ marginBottom:'2rem'}}
                   disabled={!dataLoaded} // Deshabilita el Autocomplete mientras los datos se cargan
                   />
-<Typography variant='body1' sx={{ marginBottom: '2rem' }}>
-                El ID del usuario actual es: {userId}
-              </Typography>
+
               
              
 

@@ -12,6 +12,7 @@ import { visuallyHidden } from '@mui/utils';
 import PropTypes from 'prop-types';
 import Cards from './Cards';
 import { usePalabra } from './prueba';
+import { blue } from '@mui/material/colors';
 
   
 
@@ -274,7 +275,19 @@ EnhancedTableHead.propTypes = {
       const handleChangeFilterType = (event) => {
         setFilterType(event.target.value);
     };
+    const [openDelete, setOpenDelete] = useState([]);
 
+      const handleOpenDelete = (clientIndex) => {
+        const newOpenDelete = [...openDelete];
+        newOpenDelete[clientIndex] = true;
+        setOpenDelete(newOpenDelete);
+      };
+
+      const handleCloseDelete = (clientIndex) => {
+        const newOpenDelete = [...openDelete];
+        newOpenDelete[clientIndex] = false;
+        setOpenDelete(newOpenDelete);
+      };
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('percentage');
     const [page, setPage] = React.useState(0);
@@ -580,7 +593,18 @@ EnhancedTableHead.propTypes = {
       setRowsPerPage(parseInt(event.target.value, 10));
       setPage(0);
     };
+    
 
+    const handleDelete = async (id) => {      
+      try {
+        await fetch(`http://localhost:4000/api/cliente/${id}`, {
+        method:'DELETE',
+        })
+        setClientes(clientes.filter(cliente => cliente.id_cliente!== id));
+      } catch (error) {
+        console.log(error);
+      }
+    }
     const handleChangeDNI = (e) =>{
       const newValue = e.target.value;
       if (/^[0-9]*$/.test(newValue)) {
@@ -798,10 +822,36 @@ const calcularPorcentaje = (cliente) => {
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Nivel Educativo:</b> {cliente.id_niveleducativo.nivel_educativo} </Typography>
               <Typography variant="h5" sx={{ marginBottom: '2rem' }}> <b>Motivo:</b> {cliente.id_motivo.motivo} </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="h6" display="inline" sx={{ marginRight: '.4rem' }}>
-                  Recomendación
-                </Typography>
-                <Cards sx={{ textAlign: 'center', backgroundColor: '#499BEA', width: '100%' }} texto="Rechazar solicitud" ></Cards>
+              <Button
+  sx={{
+    textAlign: 'center',
+    backgroundColor: '#0000FF',
+    color: '#FFFFFF',
+    width: '50%'
+  }}
+  onClick={() => {
+    window.location.reload();
+    console.log('Botón presionado');
+  }}
+>
+  Aprobar solicitud</Button>
+  <StyledTableCell ><Button color='error' onClick={() => handleOpenDelete(cliente.id_cliente)}> Eliminar </Button></StyledTableCell>
+  <Modal
+    open={openDelete[cliente.id_cliente] || false}
+                            onClose={() => handleCloseDelete(cliente.id_cliente)}
+                            >
+                              <Box sx={style}>
+                                <Typography variant="h6" component="div" style={{textAlign:'center'}}> ¿Desea eliminar {cliente.genero? "al cliente" : "a la clienta"} {cliente.nombre_cliente}? </Typography>
+                                <Grid container spacing={2} sx={{marginTop:'2rem'}}>
+                                  <Grid item xs={6}>
+                                    <Button fullWidth variant='contained' color='success' onClick={() => handleDelete(cliente.id_cliente)}> Sí </Button>
+                                  </Grid>
+                                  <Grid item xs={6}>
+                                    <Button fullWidth variant='contained' color='error' onClick={() => handleCloseDelete(cliente.id_cliente)}> No </Button>
+                                  </Grid>
+                                </Grid>
+      </Box>
+</Modal>
               </Box>
             </Grid>
           </Grid>
@@ -813,7 +863,7 @@ const calcularPorcentaje = (cliente) => {
 
                   </Table>
                 </TableContainer>
-                <p></p>
+               
                 <p style={{color: 'red', fontWeight: 'bold', fontStyle: 'italic' }}>
   Clientes que no se muestran en la tabla no cuentan con probabilidad de morosidad
 </p>
@@ -847,7 +897,7 @@ const calcularPorcentaje = (cliente) => {
       </Button>
       <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleCloseAlert}>
         <MuiAlert onClose={handleCloseAlert} severity="error" elevation={6} variant="filled">
-          No hay datos para exportar.
+          No hay clientes morosos.
         </MuiAlert>
         </Snackbar>
                 </Box>
