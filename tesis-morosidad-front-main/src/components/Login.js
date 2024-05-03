@@ -33,7 +33,7 @@ export default function Login(){
           e.preventDefault();
           try {
             const response = await fetch(process.env.REACT_APP_API_URL + '/registrousuario1/', {
-              method: 'POST',
+              method: 'PUT',
               headers: { 'Content-Type': 'application/json', },
               body: JSON.stringify({ correo, contrasena }),
             });
