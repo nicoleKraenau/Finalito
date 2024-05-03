@@ -255,12 +255,15 @@ export default function Registro(){
 
       const allFieldsEmpty = Object.values(clients).every(value => value === undefined || value === "");
       clients.id_usuario = userId;
-      
-    
+
 
       csvData.forEach(e => {
       
         console.log('Elemento de CSV:', e);
+        if (typeof e !== 'object' || e === null) {
+          console.log('Error: La fila del CSV no es un objeto válido:', e);
+          return; // Saltar al siguiente registro
+      }
         const fechaoriginal = e.fecha_nacimiento;
         const partes = fechaoriginal.split('/');
         console.log('91');
@@ -279,8 +282,10 @@ export default function Registro(){
         console.log('9');
         const genero1 = e.genero.toLowerCase() === "hombre" ? true : false;
         console.log('9',e.id_motivo);
-        const motivoEncontrado = (dataMotivo.find(motivo_prestamo => motivo_prestamo.motivo === e.id_motivo).id_motivo);
         
+        const motivoEncontrado = (dataMotivo.find(motivo_prestamo => motivo_prestamo.motivo === e.id_motivo).id_motivo);
+       
+      
         const nivelEncontrado = (dataNivelEducativo.find(nivel_educativo => nivel_educativo.nivel_educativo === e.id_niveleducativo).id_niveleducativo);
         console.log('9');
         const estadoEncontrado = (dataEstadoCivil.find(estado_civil => estado_civil.tipo_de_estado === e.id_estadocivil).id_estadocivil);
@@ -319,9 +324,7 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
       return;
     }
   }
-       
-      
-       
+  
         
         console.log(client,'99999999999');
       });
