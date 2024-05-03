@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createusuario, dataCorreos, login, setDatosUsuario, updateusuario,getusuario} from "../controllers/task.controllers.js"
-import { getCliente, updateCliente, getClientsbyDNI, getAllClientes, getAlldistritos,getAllregion,getAlleducativo,getAllestado,getAllmotivo, deleteCliente, deleteClientes, createcliente, getAllusuario, getDistrito, getRegion, getEstado, getEducativo, getMotivo, deleteAllClientes, getClientesbyNivelEducativo, getClientesbyMotivo, getClientesbyEstadoCivil, getClientesbyDistrito, getClientesbyRegion, getClientesbyMotivoDistrito, getClientesbyNivelEducativoDistrito, getClientesbyEstadoCivilDistrito, getClientesbyNivelEducativoRegion, getClientesbyMotivoRegion, getClientesbyEstadoCivilRegion, getDistritosbyRegion, getAllClientesbyRegion, getAllClientesbyDistrito, createcliente1, getClientsbyDNIigual, getAllDistritosbyRegion} from "../controllers/cliente.controller.js"
+import { getCliente, updateCliente, getClientsbyDNI, getAllClientes, getAlldistritos,getAllregion,getAlleducativo,getAllestado,getAllmotivo, deleteCliente, deleteClientes, createcliente, getAllusuario, getDistrito, getRegion, getEstado, getEducativo, getMotivo, deleteAllClientes, getClientesbyNivelEducativo, getClientesbyMotivo, getClientesbyEstadoCivil, getClientesbyDistrito, getClientesbyRegion, getClientesbyMotivoDistrito, getClientesbyNivelEducativoDistrito, getClientesbyEstadoCivilDistrito, getClientesbyNivelEducativoRegion, getClientesbyMotivoRegion, getClientesbyEstadoCivilRegion, getDistritosbyRegion, getAllClientesbyRegion, getAllClientesbyDistrito, getClientsbyDNIigual, getAllDistritosbyRegion} from "../controllers/cliente.controller.js"
 const router=Router();
 
 router.post('/registrousuario',createusuario)
@@ -21,7 +21,6 @@ router.put('/usuario',updateusuario)
 router.post('/usuario2',setDatosUsuario)
 router.post('/correo', dataCorreos)
 router.post('/cliente',createcliente)
-router.post('/clientu/:userId',createcliente1)
 router.get('/clientes/:userId',getAllClientes)
 router.get('/clients/:id/:userId',getClientsbyDNI)
 router.get('/clientsf/:id/:userId',getClientsbyDNIigual)
