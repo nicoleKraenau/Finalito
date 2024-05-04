@@ -350,7 +350,7 @@ export default function NuevoCliente() {
               ...task, 
               id_usuario: { id_usuario: userId } 
             };
-            const response = await fetch(process.env.REACT_APP_API_URL + '/cliente', {
+            const response = await fetch(process.env.REACT_APP_API_URL + "/cliente", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(updatedTask),
@@ -452,7 +452,7 @@ export default function NuevoCliente() {
               ...task, 
               id_usuario: { id_usuario: userId } 
             };
-            const response = await fetch(process.env.REACT_APP_API_URL + '/cliente', {
+            const response = await fetch(process.env.REACT_APP_API_URL + "/cliente", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(updatedTask),
@@ -476,12 +476,12 @@ export default function NuevoCliente() {
   const distritosporRegion = async (e) => {
       
     if(e!=null){
-      const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + '/alldistritosporregion/' + e.id_region);
+      const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + "/alldistritosporregion/" + e.id_region);
       const distritos = await responseDistritobyRegion.json();
       setDataDistrito(distritos);
       setLaregion(e.nombre_region); 
     } else {
-      const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + '/distrito');
+      const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + "/distrito");
       const distritos = await responseDistritobyRegion.json();
       setDataDistrito(distritos);
       setLaregion(null); 
