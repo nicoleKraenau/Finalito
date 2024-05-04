@@ -462,7 +462,7 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
 
     const handleDelete = async (id) => {      
       try {
-        await fetch(`http://localhost:4000/api/cliente/${id}`, {
+        await fetch(process.env.REACT_APP_API_URL + "/cliente/"+ id, {
         method:'DELETE',
         })
         setClientes(clientes.filter(cliente => cliente.id_cliente!== id));
@@ -473,7 +473,7 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
 
     const handleDeleteAll = async () => {      
       try {
-        await fetch(`http://localhost:4000/api/clientes/${userId}`, {
+        await fetch(process.env.REACT_APP_API_URL + "/clientes/"+ userId, {
         method:'DELETE',
         
       });
@@ -485,7 +485,7 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
     }
     
     const loadClientes = async () => {
-      const response =  await fetch(`http://localhost:4000/api/clientes/${userId}` )
+      const response =  await fetch(process.env.REACT_APP_API_URL + "/clientes/"+ userId )
       const data = await response.json();
       setClientes(data);
     }
