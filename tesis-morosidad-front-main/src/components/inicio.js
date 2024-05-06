@@ -41,7 +41,7 @@ export default function Inicio(){
                     <p>Con nuestro sistema, podrás gestionar los datos de tus clientes, calcular la probabilidad de incumplimiento de pagos de tus clientes, y obtendrás recomendaciones sobre si aceptar o rechazar una futura solicitud del cliente moroso.</p>  
                 </Grid>
                 <Grid item xs sx={{display:'flex', justifyContent:'center',alignItems:'center'}}>
-                    <img src='./images/Menu.jpg' style={{height:'348px', width:'570px'}}></img>
+                    <img src='./images/CreditGuard.jpg' style={{height:'348px', width:'570px'}}></img>
                 </Grid>
                 <Snackbar
                       open={open}
