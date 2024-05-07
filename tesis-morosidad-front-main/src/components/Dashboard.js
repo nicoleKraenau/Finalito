@@ -967,7 +967,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                 <Typography variant="h6" sx={{marginBottom:'.5rem', textAlign:'center', fontWeight:'bold'}}>Filtro por región y distrito</Typography>               
                   <Button variant='contained' fullWidth sx={{backgroundColor:"#B9B9B9", ':hover':{backgroundColor:'#B9B9B9'}}} endIcon={<DensityMediumSharpIcon />} onClick={handleToggle2}>Regiones</Button>
                       <Collapse in={openList2}>
-                        <Paper>
+                        <Paper style={{ height: 300, overflow: 'auto' }}>
                           <List>
                             {dataRegion.map((d) =>(
                               <ListItem key={d.id_region}>
@@ -989,7 +989,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                       </Collapse>
                   <Button variant='contained' fullWidth sx={{marginTop:"1rem", backgroundColor:"#B9B9B9", ':hover':{backgroundColor:'#B9B9B9'}}} endIcon={<DensityMediumSharpIcon />} onClick={handleToggle}>Distritos</Button>
                       <Collapse in={openList}>
-                        <Paper>
+                        <Paper style={{ height: 300, overflow: 'auto' }}>
                           <List>
                             {dataDistrito.map((d) =>(
                               
