@@ -18,7 +18,7 @@ export default function NuevoCliente() {
   const [dataRegion, setDataRegion] = useState([]);
   const [dataMotivo, setDataMotivo] = useState([]);
   const [dataClientes, setClientes] = useState([]);
-  const [laregion, setLaregion] = useState([]);
+  const [laregion, setLaregion] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [store, dispatch] = useContext (StoreContext)
   const { user } = store;
