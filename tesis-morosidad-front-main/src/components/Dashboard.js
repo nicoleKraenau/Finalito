@@ -823,10 +823,14 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
     
   
     const restablecer = () => {
+      setShowComponentA(true);
       if(distrito !== ""){ setDistrito("");}
       if(region !== ""){setRegion("");
         localStorage.setItem("region", "");
         setDistrito("");}
+        setTimeout(() => {
+          setShowComponentA(false); // Cambiar el estado después de unos segundos
+        }, 3000); // 3000 milisegundos = 3 segundos
       if(openList){handleToggle();}
       if(openList2){handleToggle2();}
       console.log("hora de restablecer");

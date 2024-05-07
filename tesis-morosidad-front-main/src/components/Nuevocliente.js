@@ -18,7 +18,7 @@ export default function NuevoCliente() {
   const [dataRegion, setDataRegion] = useState([]);
   const [dataMotivo, setDataMotivo] = useState([]);
   const [dataClientes, setClientes] = useState([]);
-  const [laregion, setLaregion] = useState();
+  const [laregion, setLaregion] = useState([]);
   const [alertOpen, setAlertOpen] = useState(false);
   const [store, dispatch] = useContext (StoreContext)
   const { user } = store;
@@ -138,7 +138,7 @@ export default function NuevoCliente() {
       if (!dataDistrito || !dataUsuario || !dataEstadoCivil || !dataNivelEducativo || !dataRegion || !dataMotivo) {
         await new Promise((resolve) => setTimeout(resolve, 100)); // Espera 100ms y vuelve a verificar
       }
-      console.log('Antes de la solicitud fetch');
+      //console.log('Antes de la solicitud fetch');
       const res = await fetch(process.env.REACT_APP_API_URL + "/cliente/"+ id);
       const data = await res.json();      
 
@@ -163,7 +163,10 @@ export default function NuevoCliente() {
       const distrito = dataDistrito.find((item) => item.id_distrito === data.id_distrito);
       const motivo = dataMotivo.find((item) => item.id_motivo === data.id_motivo);
       const usuario = dataUsuario.find((item) => item.id_usuario === data.id_usuario);
-      
+      const region = dataRegion.find((item)=> item.id_region === distrito.id_region)
+      console.log(region);
+      setLaregion(region);
+      console.log(laregion);
       const estadocivil = dataEstadoCivil.find((item) => item.id_estadocivil === data.id_estadocivil);
       const niveleducativo = dataNivelEducativo.find((item) =>item.id_niveleducativo === data.id_niveleducativo);
       console.log(user.id )
@@ -371,11 +374,13 @@ export default function NuevoCliente() {
     }
   };
   const handleSubmit1 = async (e) => {
+    console.log(task.deudas);
     console.log('ggggggggggggggggggggggggggggggggggggggg')
     e.preventDefault();
     setLoading(true);
     const dniDuplicado = dataClientes.some((cliente) => cliente.dni === task.dni && cliente.id !== task.id);
     const edad = calcularEdad(task.fecha_nacimiento);
+    
     
     if (task.dni.length !== 8) {
       setAlert("El DNI no es de 8 dígitos. Intente de nuevo");
@@ -391,16 +396,16 @@ export default function NuevoCliente() {
     }else if (task.nombre_cliente=="") {
       setAlert("El campo 'Nombre' está vacío. Intente de nuevo.");
       handleOpen();
-    } else if (task.cantidad_propiedades=="") {
+    } else if (task.cantidad_propiedades==="") {
       setAlert("El campo 'Cantidad Propiedades' está vacío. Intente de nuevo.");
       handleOpen();
-    } else if (task.cantidad_hijos=="") {
+    } else if (task.cantidad_hijos==="") {
       setAlert("El campo 'Cantidad Hijos' está vacío. Intente de nuevo.");
       handleOpen();
-    } else if (task.deudas=="") {
+    } else if (task.deudas==="") {
       setAlert("El campo 'Deudas' está vacío. Intente de nuevo.");
       handleOpen();
-    } else if (task.salario=="") {
+    } else if (task.salario==="") {
       setAlert("El campo 'Salario' está vacío. Intente de nuevo.");
       handleOpen();
     } else if (task.DNI=="") {
@@ -479,7 +484,7 @@ export default function NuevoCliente() {
       const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + "/alldistritosporregion/" + e.id_region);
       const distritos = await responseDistritobyRegion.json();
       setDataDistrito(distritos);
-      setLaregion(e.nombre_region); 
+      setLaregion(e); 
     } else {
       const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + "/distrito");
       const distritos = await responseDistritobyRegion.json();
@@ -525,7 +530,7 @@ export default function NuevoCliente() {
               </Grid>
               <Grid item xs={6}>
                 <TextField onChange={handlenumChange} fullWidth name="dni" id="filled-basic1" label="DNI" variant="filled" value={task.dni} sx={{ marginBottom:'2rem'}}/>
-                <Autocomplete
+                <Autocomplete value={laregion}
                   onChange={(event, newValue) => { distritosporRegion(newValue) }}
                   options={dataRegion || []}
                   getOptionLabel={(option) => option.nombre_region}
