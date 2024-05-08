@@ -55,9 +55,9 @@ const CrearCuenta = () =>{
         const { name, value } = e.target;
 
         // Verificar si el campo es el nombre y si contiene solo letras y espacios
-        if (name === "nombre" && /^[a-zA-Z\s]*$/.test(value)) {
+        if (name === "nombre_usuario" && /^[a-zA-Z\s]*$/.test(value)) {
             setTask({ ...task, [name]: value });
-        } else if (name !== "nombre") { // Para otros campos, simplemente actualizar el estado
+        } else if (name !== "nombre_usuario") { // Para otros campos, simplemente actualizar el estado
             setTask({ ...task, [name]: value });
         }
     };
@@ -66,7 +66,7 @@ const CrearCuenta = () =>{
       e.preventDefault();
       setLoading(true);
   
-      const nombreEmpty = task.nombre === "";
+      const nombreEmpty = task.nombre_usuario === "";
       const emailEmpty = task.email === "";
       const contrasenaEmpty = task.contrasena === "";
       const contrasenaLengthValid = task.contrasena.length > 8; // Verificar la longitud de la contraseña
@@ -143,7 +143,7 @@ const CrearCuenta = () =>{
                 <CardContent>
                   <h1 style={{textAlign:'center'}}>Crear Cuenta</h1>
                   <form onSubmit={handleSubmit}>
-                    <TextField onChange={handleChange} style={{marginBottom:'2rem'}} fullWidth name="nombre" id="filled-basic" label="Nombre" variant="filled" value={task.nombre}/>
+                    <TextField onChange={handleChange} style={{marginBottom:'2rem'}} fullWidth name="nombre_usuario" id="filled-basic" label="Nombre" variant="filled" value={task.nombre_usuario}/>
                     <TextField onChange={handleChange} style={{marginBottom:'2rem'}} fullWidth name="email" id="filled-basic1" label="Email" variant="filled" type="email" value={task.email}/>
                     <TextField onChange={handleChange} style={{marginBottom:'2rem'}} fullWidth name="contrasena"  id="filled-basic2" label="Contraseña" variant="filled" type="password" value={task.contrasena}/>
                     <Button fullWidth variant="contained" type="submit">Crear Cuenta</Button>
