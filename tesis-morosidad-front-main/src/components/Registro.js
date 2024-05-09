@@ -73,7 +73,7 @@ export default function Registro(){
       };
 
       const handleCloseDeleteAll = () => {
-        setOpenDeleteAll(true);
+        setOpenDeleteAll(false);
       };
 
       const [openDelete, setOpenDelete] = useState([]);
@@ -597,7 +597,7 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
                               <Button fullWidth='true' variant='contained'  color='success' onClick={() => handleDeleteAll()}> Sí </Button>
                             </Grid>
                             <Grid item xs={6}>
-                              <Button fullWidth='true' variant='contained'  color='error' onClick={handleCloseDeleteAll}> No </Button>
+                              <Button fullWidth='true' variant='contained'  color='error' onClick={()=>handleCloseDeleteAll()}> No </Button>
                             </Grid>
                           </Grid>
                         </Box>
