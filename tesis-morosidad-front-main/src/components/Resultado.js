@@ -652,11 +652,11 @@ EnhancedTableHead.propTypes = {
 const calcularPorcentaje = (cliente) => {
   console.log('kkkkkkkkkkkkkkk')
   const porcentaje = Math.max(
-    0,
+    1,
     Math.min(
       100,
       Math.min(
-        ((((cliente.salario) * palabra / ((cliente.deudas + 1) * (cliente.cantidad_propiedades + 1) * (cliente.cantidad_hijos + 1) * calcularEdad(cliente.fecha_nacimiento))) * 0.01) - 50) * -1,
+        ((((cliente.salario) * (palabra*0.1) / ((cliente.deudas + 1) * (cliente.cantidad_propiedades + 1) * (cliente.cantidad_hijos + 1) * calcularEdad(cliente.fecha_nacimiento))) * 0.01) - 50) * -1,
         1000000
       )
     )
