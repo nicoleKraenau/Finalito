@@ -280,16 +280,7 @@ export default function NuevoCliente() {
 
     const edad = calcularEdad(task.fecha_nacimiento);
 
-    if (task.dni.length !== 8) {
-      setAlert("El DNI no es de 8 dígitos. Intente de nuevo");
-      handleOpen();
-    } else if (edad < 18) {
-      setAlert("El cliente es menor de edad. Intente de nuevo.");
-      handleOpen();
-    } else if (!editing && dniDuplicado) { // Check if adding a new client and DNI already exists for another client
-      setAlert("El DNI ya se ha registrado. Intente de nuevo.");
-      handleOpen();
-    } else if (task.nombre_cliente=="") {
+    if (task.nombre_cliente=="") {
       setAlert("El campo 'Nombre' está vacío. Intente de nuevo.");
       handleOpen();
     } else if (task.cantidad_propiedades=="") {
@@ -304,7 +295,7 @@ export default function NuevoCliente() {
     } else if (task.salario=="") {
       setAlert("El campo 'Salario' está vacío. Intente de nuevo.");
       handleOpen();
-    } else if (task.DNI=="") {
+    } else if (task.dni==="") {
       setAlert("El campo 'DNI' está vacío. Intente de nuevo.");
       handleOpen();
     } else if (laregion==null) {
@@ -327,6 +318,15 @@ export default function NuevoCliente() {
       handleOpen();
     } else if (task.genero==null) {
       setAlert("El campo 'Genero' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.dni.length !== 8) {
+      setAlert("El DNI no es de 8 dígitos. Intente de nuevo");
+      handleOpen();
+    } else if (edad < 18) {
+      setAlert("El cliente es menor de edad. Intente de nuevo.");
+      handleOpen();
+    } else if (!editing && dniDuplicado) { // Check if adding a new client and DNI already exists for another client
+      setAlert("El DNI ya se ha registrado. Intente de nuevo.");
       handleOpen();
     } else {
       try {
@@ -382,18 +382,7 @@ export default function NuevoCliente() {
     const edad = calcularEdad(task.fecha_nacimiento);
     
     
-    if (task.dni.length !== 8) {
-      setAlert("El DNI no es de 8 dígitos. Intente de nuevo");
-      handleOpen();
-    } else if (edad < 18) {
-      setAlert("El cliente es menor de edad. Intente de nuevo.");
-      handleOpen();
-    
-    } else if (!editing && !dniDuplicado && task.dni !== dataClientes.find(cliente => cliente.dni === task.dni && cliente.id !== task.id).dni) {
-      // Si no estamos en modo de edición y el DNI está duplicado con otro cliente que no es el actual
-      setAlert("El DNI ya se ha registrado para otro cliente. Intente de nuevo.");
-      handleOpen();
-    }else if (task.nombre_cliente=="") {
+    if (task.nombre_cliente=="") {
       setAlert("El campo 'Nombre' está vacío. Intente de nuevo.");
       handleOpen();
     } else if (task.cantidad_propiedades==="") {
@@ -408,7 +397,7 @@ export default function NuevoCliente() {
     } else if (task.salario==="") {
       setAlert("El campo 'Salario' está vacío. Intente de nuevo.");
       handleOpen();
-    } else if (task.DNI=="") {
+    } else if (task.dni=="") {
       setAlert("El campo 'DNI' está vacío. Intente de nuevo.");
       handleOpen();
     } else if (laregion==null) {
@@ -431,6 +420,17 @@ export default function NuevoCliente() {
       handleOpen();
     } else if (task.genero==null) {
       setAlert("El campo 'Genero' no está seleccionado. Intente de nuevo.");
+      handleOpen();
+    } else if (task.dni.length !== 8) {
+      setAlert("El DNI no es de 8 dígitos. Intente de nuevo");
+      handleOpen();
+    } else if (edad < 18) {
+      setAlert("El cliente es menor de edad. Intente de nuevo.");
+      handleOpen();
+
+    } else if (!editing && !dniDuplicado && task.dni !== dataClientes.find(cliente => cliente.dni === task.dni && cliente.id !== task.id).dni) {
+      // Si no estamos en modo de edición y el DNI está duplicado con otro cliente que no es el actual
+      setAlert("El DNI ya se ha registrado para otro cliente. Intente de nuevo.");
       handleOpen();
     } else {
       try {

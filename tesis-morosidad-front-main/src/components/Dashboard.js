@@ -885,7 +885,6 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                       {datacountClientsDistrito.length > 0
                       ? <PieEstadoCivil/>
                       : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
-                      <p>{datacountClientsDistrito.length}</p>
                       </Fragment>
                     }                          
                   </Grid>
