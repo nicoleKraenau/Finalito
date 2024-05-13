@@ -300,7 +300,7 @@ export default function Registro(){
         console.log('9');
         const estadoEncontrado = (dataEstadoCivil.find(estado_civil => estado_civil.tipo_de_estado === e.id_estadocivil).id_estadocivil);
         console.log('9');
-        const distritoEncontrado = (dataDistrito.find(distrito => distrito.nombre_distrito=== e.id_distrito).id_distrito-1);
+        const distritoEncontrado = (dataDistrito.find(distrito => distrito.nombre_distrito=== e.id_distrito).id_distrito);
         
 console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
         const client = {
