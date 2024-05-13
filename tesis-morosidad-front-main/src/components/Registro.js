@@ -412,7 +412,7 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
         `;
         clientsText += client.trim() + '\n';
       });
-    
+      console.log('66666666666hhhhhhhuuuuuuuuuuuuuuuu');
       setClientesExport(clientsText);
     
       const blob = new Blob([clientsText], { type: 'text/plain' });
