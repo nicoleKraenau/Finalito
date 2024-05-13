@@ -300,7 +300,7 @@ export default function Registro(){
         console.log('9');
         const estadoEncontrado = (dataEstadoCivil.find(estado_civil => estado_civil.tipo_de_estado === e.id_estadocivil).id_estadocivil);
         console.log('9');
-        const distritoEncontrado = (dataDistrito.find(distrito => distrito.nombre_distrito === e.id_distrito).id_distrito);
+        const distritoEncontrado = (dataDistrito.find(distrito => distrito.nombre_distrito=== e.id_distrito).id_distrito-1);
         
 console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
         const client = {
@@ -397,10 +397,10 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
         }, 3000);
         return;
       }
-    
+      console.log('hhhhhhhuuuuuuuuuuuuuuuu');
       let clientsText = '';
       clientsText += 'nombre_cliente,dni,fecha_nacimiento,cantidad_propiedades,cantidad_hijos,genero,distrito,estadocivil,niveleducativo,salario,deudas,motivo\n';
-      
+      console.log('hhhhhhhuuuuuuuuuuuuuuuu');
       clientes.forEach(element => {
         const fecha = new Date(element.fecha_nacimiento);
         const anio = fecha.getFullYear();
