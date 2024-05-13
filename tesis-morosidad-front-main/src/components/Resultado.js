@@ -49,6 +49,16 @@ const [filterOptions, setFilterOptions] = useState({
     educacion: false,
     porcentaje:true,
 });
+const [filterOptionstemp, setFilterOptionstemp] = useState({
+  dni: true,
+  nombre: false,
+  salario: false,
+  distrito: false,
+  edad:false,
+  motivo: false,
+  educacion: false,
+  porcentaje:true,
+});
 const [selectedFilters, setSelectedFilters] = useState([]); // Estado para almacenar los filtros seleccionados
 const [clientesFiltrados, setClientesFiltrados] = useState([]); // Estado para almacenar los clientes filtrados
 console.log(palabra)
@@ -63,33 +73,7 @@ const [selectedFilterCategories, setSelectedFilterCategories] = useState([]);
 // Otras variables y estados...
 
 const handleApplyFilters = () => {
-  // Actualizar la lista de filtros seleccionados
-  const newSelectedFilters = Object.keys(filterOptions).filter(filter => filterOptions[filter]);
-  setSelectedFilters(newSelectedFilters);
-
-  // Actualizar la lista de categorías de filtro seleccionadas
-  const newSelectedFilterCategories = Object.keys(filterOptions).filter(filter => filterOptions[filter]);
-  setSelectedFilterCategories(newSelectedFilterCategories);
-
-  // Aplicar el filtro a los clientes según los filtros seleccionados
-  let filteredClients = [...clientes];
-  newSelectedFilters.forEach(filter => {
-    if (filter === 'dni') {
-      // Si el filtro es por DNI, aplicar el filtro directamente sobre la lista de clientes
-      filteredClients = filteredClients.filter(cliente =>
-        cliente.dni.toLowerCase().includes(dni.toLowerCase())
-      );
-    } else {
-      // Para otros filtros, aplicar la lógica de filtrado correspondiente
-      filteredClients = filteredClients.filter(cliente => cliente[filter]);
-    }
-  });
-
-  // Actualizar el estado con la lista de clientes filtrados
-  setClientesFiltrados(filteredClients);
-
-  // Mostrar las cabeceras de la tabla después de aplicar los filtros
-  setShowHeaders(true);
+  setFilterOptions(filterOptionstemp);
 };
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -580,8 +564,8 @@ EnhancedTableHead.propTypes = {
       if (event.target.name === "dni") {
         return;
       }
-      setFilterOptions({
-        ...filterOptions,
+      setFilterOptionstemp({
+        ...filterOptionstemp,
         [event.target.name]: event.target.checked,
       });
     };
@@ -652,11 +636,11 @@ EnhancedTableHead.propTypes = {
 const calcularPorcentaje = (cliente) => {
   console.log('kkkkkkkkkkkkkkk')
   const porcentaje = Math.max(
-    0,
+    1,
     Math.min(
       100,
       Math.min(
-        ((((cliente.salario) * palabra / ((cliente.deudas + 1) * (cliente.cantidad_propiedades + 1) * (cliente.cantidad_hijos + 1) * calcularEdad(cliente.fecha_nacimiento))) * 0.01) - 50) * -1,
+        ((((cliente.salario) * (palabra*0.1) / ((cliente.deudas + 1) * (cliente.cantidad_propiedades + 1) * (cliente.cantidad_hijos + 1) * calcularEdad(cliente.fecha_nacimiento))) * 0.01) - 50) * -1,
         1000000
       )
     )
@@ -727,74 +711,69 @@ const calcularPorcentaje = (cliente) => {
                     <Paper>
                    
                     <FormControlLabel
-                        control={<Checkbox checked={filterOptions.nombre} onChange={handleChangeFilterOption} name="nombre" />}
+                        control={<Checkbox checked={filterOptionstemp.nombre} onChange={handleChangeFilterOption} name="nombre" />}
                         label="Nombre"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={filterOptions.salario} onChange={handleChangeFilterOption} name="salario" />}
+                        control={<Checkbox checked={filterOptionstemp.salario} onChange={handleChangeFilterOption} name="salario" />}
                         label="Salario"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={filterOptions.distrito} onChange={handleChangeFilterOption} name="distrito" />}
+                        control={<Checkbox checked={filterOptionstemp.distrito} onChange={handleChangeFilterOption} name="distrito" />}
                         label="Distrito"
                     />
                      <FormControlLabel
-                        control={<Checkbox checked={filterOptions.edad} onChange={handleChangeFilterOption} name="edad" />}
+                        control={<Checkbox checked={filterOptionstemp.edad} onChange={handleChangeFilterOption} name="edad" />}
                         label="Edad"
                     />
                    
                     <FormControlLabel
-                        control={<Checkbox checked={filterOptions.motivo} onChange={handleChangeFilterOption} name="motivo" />}
+                        control={<Checkbox checked={filterOptionstemp.motivo} onChange={handleChangeFilterOption} name="motivo" />}
                         label="Motivo"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={filterOptions.niveleducativo} onChange={handleChangeFilterOption} name="niveleducativo" />}
+                        control={<Checkbox checked={filterOptionstemp.niveleducativo} onChange={handleChangeFilterOption} name="niveleducativo" />}
                         label="Educación"
                     />
                    
-               <Button
-          variant='contained'
-          fullWidth
-          sx={{ marginTop: '1rem', backgroundColor: "#1976D2" }}
-          onClick={handleApplyFilters}
-    >
-        Aplicar
-    </Button>
-                    </Paper>
-                )}
-                
-              </Grid>
-              <Grid item xs={10}>
-   <TableContainer component={Paper}>
-                  <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                    <EnhancedTableHead
-                      order={order}
-                      orderBy={orderBy}
-                      onRequestSort={handleRequestSort}
-                      rowCount={clientes.length}
-                    />
-      
-      <TableBody>
-        
-        {visibleRows.map((cliente, i) => (
-          <React.Fragment key={cliente.id_cliente}>
-            
-            <StyledTableRow key={cliente.id_cliente} onClick={() => handleOpen(cliente.id_cliente)}>
-           
-              {getVisibleColumns().map((column) => (
-                <StyledTableCell key={column}>
-                  {column === "DNI" && cliente.dni}
-                  {column === "Nombre" && cliente.nombre_cliente}
-                  {column === "Distrito" && cliente.id_distrito.nombre_distrito}
-                  {column === "Salario" && cliente.salario}
-                  {column === "Edad" && calcularEdad(cliente.fecha_nacimiento)}
-                  {column === "Motivo" && cliente.id_motivo.motivo}
-                  {column === "Educación" && cliente.id_niveleducativo.nivel_educativo}
-                  {column === "Porcentaje" && calcularPorcentaje(cliente)}
-                 
-                </StyledTableCell>
-              ))}
-            </StyledTableRow>
+                   <Button
+            variant='contained'
+            fullWidth
+            sx={{ marginTop: '1rem', backgroundColor: "#1976D2" }}
+            onClick={handleApplyFilters}
+          >
+            Aplicar
+          </Button>
+        </Paper>
+      )}
+    </Grid>
+    <Grid item xs={10}>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <EnhancedTableHead
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+            rowCount={clientes.length}
+          />
+          <TableBody>
+            {visibleRows.map((cliente, i) => (
+              <React.Fragment key={cliente.id_cliente}>
+                <StyledTableRow key={cliente.id_cliente} onClick={() => handleOpen(cliente.id_cliente)}>
+                  {getVisibleColumns().map((column) => (
+                    <StyledTableCell key={column}>
+                      {column === "DNI" && cliente.dni}
+                      {column === "Nombre" && cliente.nombre_cliente}
+                      {column === "Distrito" && cliente.id_distrito.nombre_distrito}
+                      {column === "Salario" && cliente.salario}
+                      {column === "Edad" && calcularEdad(cliente.fecha_nacimiento)}
+                      {column === "Motivo" && cliente.id_motivo.motivo}
+                      {column === "Educación" && cliente.id_niveleducativo.nivel_educativo}
+                      {column === "Porcentaje" && calcularPorcentaje(cliente)}
+                    </StyledTableCell>
+                  ))}
+                </StyledTableRow>
+
 
       <Modal
         open={open[cliente.id_cliente] || false}

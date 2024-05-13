@@ -823,10 +823,14 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
     
   
     const restablecer = () => {
+      setShowComponentA(true);
       if(distrito !== ""){ setDistrito("");}
       if(region !== ""){setRegion("");
         localStorage.setItem("region", "");
         setDistrito("");}
+        setTimeout(() => {
+          setShowComponentA(false); // Cambiar el estado después de unos segundos
+        }, 3000); // 3000 milisegundos = 3 segundos
       if(openList){handleToggle();}
       if(openList2){handleToggle2();}
       console.log("hora de restablecer");
@@ -881,7 +885,6 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                       {datacountClientsDistrito.length > 0
                       ? <PieEstadoCivil/>
                       : <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh',}}>No hay datos</Typography>}
-                      <p>{datacountClientsDistrito.length}</p>
                       </Fragment>
                     }                          
                   </Grid>
@@ -963,7 +966,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                 <Typography variant="h6" sx={{marginBottom:'.5rem', textAlign:'center', fontWeight:'bold'}}>Filtro por región y distrito</Typography>               
                   <Button variant='contained' fullWidth sx={{backgroundColor:"#B9B9B9", ':hover':{backgroundColor:'#B9B9B9'}}} endIcon={<DensityMediumSharpIcon />} onClick={handleToggle2}>Regiones</Button>
                       <Collapse in={openList2}>
-                        <Paper>
+                        <Paper style={{ height: 300, overflow: 'auto' }}>
                           <List>
                             {dataRegion.map((d) =>(
                               <ListItem key={d.id_region}>
@@ -985,7 +988,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                       </Collapse>
                   <Button variant='contained' fullWidth sx={{marginTop:"1rem", backgroundColor:"#B9B9B9", ':hover':{backgroundColor:'#B9B9B9'}}} endIcon={<DensityMediumSharpIcon />} onClick={handleToggle}>Distritos</Button>
                       <Collapse in={openList}>
-                        <Paper>
+                        <Paper style={{ height: 300, overflow: 'auto' }}>
                           <List>
                             {dataDistrito.map((d) =>(
                               

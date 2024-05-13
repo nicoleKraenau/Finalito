@@ -59,7 +59,15 @@ export default function Correo(){
         const handleSubmit = async (e) => {
           e.preventDefault();
           try {
-              if (contrasena === repcontrasena) {
+              if(contrasena===""){
+                setAlert('El campo "Contraseña" está vacio. Intente de nuevo.');
+                handleOpen();
+                return;
+              } else if(repcontrasena===""){
+                setAlert('El campo "Repetir Contraseña" está vacio. Intente de nuevo.');
+                handleOpen();
+                return;
+              } else if (contrasena === repcontrasena) {
                   // Verificar longitud de la contraseña
                   if (contrasena.length < 8) {
                       setAlert('La contraseña debe tener al menos 8 caracteres.');
