@@ -330,52 +330,44 @@ EnhancedTableHead.propTypes = {
     // Usa useEffect para cargar los datos cuando el componente se monta
     
     const exportClients = async () => {
-      console.log('hhhhhhhuuuuuuuuuuuuuuuu')
+      console.log('hhhhhhhuuuuuuuuuuuuuuuu');
       if (clientes.length === 0) {
-       // setAlertOpen("El valor del PBI no puede estar vacío. Por favor, ingresa un valor válido.");
-        console.log('jjjj')
+        console.log('jjjj');
         setAlertOpen(true);
+    
+        setTimeout(() => {
+          setAlertOpen(false);
+        }, 3000);
         return;
       }
-    console.log('hhhhhhhuuuuuuuuuuuuuuuu')
-    let clientstoExport = [];
-    clientes.forEach(element => {
-
-      console.log(porcentajes)
-        // Obtener el porcentaje correspondiente al ID del usuario
+      console.log('hhhhhhhuuuuuuuuuuuuuuuu');
+      let clientsText = '';
+      clientsText += 'nombre_cliente,dni,fecha_nacimiento,cantidad_propiedades,cantidad_hijos,genero,distrito,estadocivil,niveleducativo,salario,deudas,motivo,porcentaje\n';
+      console.log('hhhhhhhuuuuuuuuuuuuuuuu');
+      clientes.forEach(element => {
+        const fecha = new Date(element.fecha_nacimiento);
+        const anio = fecha.getFullYear();
+        let mes = fecha.getMonth() + 1 < 10 ? '0' + (fecha.getMonth() + 1) : fecha.getMonth() + 1;
+        let dia = fecha.getDate() < 10 ? '0' + fecha.getDate() : fecha.getDate();
         const porcentaje = calcularPorcentaje(element); // Calcula el porcentaje
-    
-        const client = {
-            id_cliente: element.id_cliente,
-            nombre_cliente: element.nombre_cliente,
-            dni: element.dni,
-            fecha_nacimiento: element.fecha_nacimiento,
-            cantidad_propiedades: element.cantidad_propiedades,
-            cantidad_hijos: element.cantidad_hijos,
-            genero: element.genero ? 'Hombre' : "Mujer",
-            distrito: element.id_distrito.nombre_distrito, 
-            usuario: element.id_usuario.nombre_usuario,
-            estadocivil: element.id_estadocivil.tipo_de_estado,
-            niveleducativo: element.id_niveleducativo.nivel_educativo,
-            salario: element.salario,
-            deudas: element.deudas,
-            motivo: element.id_motivo.motivo,
-            porcentaje: porcentaje,
-        };
-        console.log(client)
-        clientstoExport.push(client);
+        const client = `
+          ${element.nombre_cliente},${element.dni},${dia}/${mes}/${anio},${element.cantidad_propiedades},${element.cantidad_hijos},${element.genero ? 'Mujer' : 'Hombre'},${element.id_distrito.nombre_distrito},${element.id_estadocivil.tipo_de_estado},${element.id_niveleducativo.nivel_educativo},${element.salario},${element.deudas},${element.id_motivo.motivo},${porcentaje}
+        `;
+        clientsText += client.trim() + '\n';
       });
+      console.log('66666666666hhhhhhhuuuuuuuuuuuuuuuu');
+      setClientesExport(clientsText);
     
-      const csvData = Papa.unparse(clientstoExport);
-      const blob = new Blob([csvData], { type: 'text/csv' });
+      const blob = new Blob([clientsText], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = 'data.csv';
+      a.download = 'data.txt';
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
+  
     };
     
   

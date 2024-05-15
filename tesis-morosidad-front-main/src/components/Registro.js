@@ -302,6 +302,7 @@ export default function Registro(){
         console.log('9');
         const distritoEncontrado = (dataDistrito.find(distrito => distrito.nombre_distrito=== e.id_distrito).id_distrito);
         
+        
 console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
         const client = {
           nombre_cliente: e.nombre_cliente,
