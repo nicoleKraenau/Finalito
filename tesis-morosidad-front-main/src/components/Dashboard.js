@@ -251,10 +251,7 @@ export default function Dashboard(){
           axisBottom={{
               tickSize: 5,
               tickPadding: 5,
-              tickRotation: 0,
-              legend: 'Distritos',
-              legendPosition: 'middle',
-              legendOffset: 32
+              tickRotation: -45,
           }}
           axisLeft={{
               tickSize: 5,
@@ -328,9 +325,6 @@ export default function Dashboard(){
               tickSize: 5,
               tickPadding: 5,
               tickRotation: 0,
-              legend: 'Regiones',
-              legendPosition: 'middle',
-              legendOffset: 32
           }}
           axisLeft={{
               tickSize: 5,
@@ -853,7 +847,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
             <Grid container spacing={2} sx={{marginTop:'2rem', marginBottom:'2rem'}}>
               <Grid item xs={10}>
                 <Grid container>
-                  <Grid item xs={12} md={6} sx={{height: 400, marginBottom:'2rem'}}>
+                  <Grid item xs={12} md={6} sx={{height: 400, marginBottom:'7rem'}}>
                     <Typography variant="h6" sx={{marginBottom:'.5rem', textAlign:'center', fontWeight:'bold'}}>Región con mayor número de morosos</Typography>               
                     {showComponentA
                     ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
@@ -866,7 +860,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                       </Fragment>
                     }
                   </Grid>
-                  <Grid item xs={12} md={6} sx={{height: 400,  marginBottom:'2rem'}}>
+                  <Grid item xs={12} md={6} sx={{height: 400,  marginBottom:'7rem'}}>
                     <Typography variant="h6" sx={{marginBottom:'.5rem', textAlign:'center', fontWeight:'bold'}}>Distrito con mayor número de morosos</Typography>              
                     {showComponentA
                     ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
