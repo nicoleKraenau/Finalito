@@ -636,11 +636,11 @@ EnhancedTableHead.propTypes = {
 const calcularPorcentaje = (cliente) => {
   console.log('kkkkkkkkkkkkkkk')
   const porcentaje = Math.max(
-    0,
+    1,
     Math.min(
       100,
       Math.min(
-        ((((cliente.salario) * palabra / ((cliente.deudas + 1) * (cliente.cantidad_propiedades + 1) * (cliente.cantidad_hijos + 1) * calcularEdad(cliente.fecha_nacimiento))) * 0.01) - 50) * -1,
+        ((((cliente.salario) * (palabra*0.1) / ((cliente.deudas + 1) * (cliente.cantidad_propiedades + 1) * (cliente.cantidad_hijos + 1) * calcularEdad(cliente.fecha_nacimiento))) * 0.01) - 50) * -1,
         1000000
       )
     )
@@ -736,49 +736,44 @@ const calcularPorcentaje = (cliente) => {
                         label="Educación"
                     />
                    
-               <Button
-          variant='contained'
-          fullWidth
-          sx={{ marginTop: '1rem', backgroundColor: "#1976D2" }}
-          onClick={handleApplyFilters}
-    >
-        Aplicar
-    </Button>
-                    </Paper>
-                )}
-                
-              </Grid>
-              <Grid item xs={10}>
-   <TableContainer component={Paper}>
-                  <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                    <EnhancedTableHead
-                      order={order}
-                      orderBy={orderBy}
-                      onRequestSort={handleRequestSort}
-                      rowCount={clientes.length}
-                    />
-      
-      <TableBody>
-        
-        {visibleRows.map((cliente, i) => (
-          <React.Fragment key={cliente.id_cliente}>
-            
-            <StyledTableRow key={cliente.id_cliente} onClick={() => handleOpen(cliente.id_cliente)}>
-           
-              {getVisibleColumns().map((column) => (
-                <StyledTableCell key={column}>
-                  {column === "DNI" && cliente.dni}
-                  {column === "Nombre" && cliente.nombre_cliente}
-                  {column === "Distrito" && cliente.id_distrito.nombre_distrito}
-                  {column === "Salario" && cliente.salario}
-                  {column === "Edad" && calcularEdad(cliente.fecha_nacimiento)}
-                  {column === "Motivo" && cliente.id_motivo.motivo}
-                  {column === "Educación" && cliente.id_niveleducativo.nivel_educativo}
-                  {column === "Porcentaje" && calcularPorcentaje(cliente)}
-                 
-                </StyledTableCell>
-              ))}
-            </StyledTableRow>
+                   <Button
+            variant='contained'
+            fullWidth
+            sx={{ marginTop: '1rem', backgroundColor: "#1976D2" }}
+            onClick={handleApplyFilters}
+          >
+            Aplicar
+          </Button>
+        </Paper>
+      )}
+    </Grid>
+    <Grid item xs={10}>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <EnhancedTableHead
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+            rowCount={clientes.length}
+          />
+          <TableBody>
+            {visibleRows.map((cliente, i) => (
+              <React.Fragment key={cliente.id_cliente}>
+                <StyledTableRow key={cliente.id_cliente} onClick={() => handleOpen(cliente.id_cliente)}>
+                  {getVisibleColumns().map((column) => (
+                    <StyledTableCell key={column}>
+                      {column === "DNI" && cliente.dni}
+                      {column === "Nombre" && cliente.nombre_cliente}
+                      {column === "Distrito" && cliente.id_distrito.nombre_distrito}
+                      {column === "Salario" && cliente.salario}
+                      {column === "Edad" && calcularEdad(cliente.fecha_nacimiento)}
+                      {column === "Motivo" && cliente.id_motivo.motivo}
+                      {column === "Educación" && cliente.id_niveleducativo.nivel_educativo}
+                      {column === "Porcentaje" && calcularPorcentaje(cliente)}
+                    </StyledTableCell>
+                  ))}
+                </StyledTableRow>
+
 
       <Modal
         open={open[cliente.id_cliente] || false}

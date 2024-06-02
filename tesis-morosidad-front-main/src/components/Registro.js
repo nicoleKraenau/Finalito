@@ -214,12 +214,22 @@ export default function Registro(){
   
           // Realiza la consulta a la base de datos PostgreSQL con los datos del CSV
           changedData.forEach(async (e) => {
+            
               await uploadCSVDataToServer(e);
+             
           });
-  
-          console.log('Consulta a la base de datos completada.');
+      
+          console.log('Consulta a la base de datos completada.' );
+
+    
       } catch (error) {
           console.error('Error al procesar el archivo CSV o realizar la consulta a la base de datos:', error);
+       
+          setTimeout(() => {
+            
+            window.location.reload();
+          }, 100); // Cerrar la alerta después de 2 segundos
+          return;
       }
   }
 
@@ -377,67 +387,45 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
     };
 
     const exportClients = async () => {
-      console.log('hhhhhhhuuuuuuuuuuuuuuuu')
+      console.log('hhhhhhhuuuuuuuuuuuuuuuu');
       if (clientes.length === 0) {
-       // setAlertOpen("El valor del PBI no puede estar vacío. Por favor, ingresa un valor válido.");
-        console.log('jjjj')
+        console.log('jjjj');
         setAlertOpen(true);
-      
+    
         setTimeout(() => {
           setAlertOpen(false);
-          
-        }, 3000); 
+        }, 3000);
         return;
       }
-      let clientstoExport = [];
-          clientes.forEach(element => {
-            const fecha = new Date(element.fecha_nacimiento);
-            const anio = fecha.getFullYear(); // 2023
-            let mes = null;
-            let dia = null;
-            if(fecha.getMonth()+1 < 10){
-              mes = "0" + (fecha.getMonth() + 1);
-            } else{
-              mes = fecha.getMonth() + 1;
-            }
-            if(fecha.getDate() < 10){
-              dia = "0" + fecha.getDate();
-            } else{
-              dia = fecha.getDate();
-            }
-            console.log(element.genero);
-            const client = ({
-           
-              nombre_cliente: element.nombre_cliente,
-              dni: element.dni,
-              fecha_nacimiento: anio + "-" + mes + "-" + dia,
-              cantidad_propiedades: element.cantidad_propiedades,
-              cantidad_hijos: element.cantidad_hijos,
-              genero: element.genero ? 'Hombre' : "Mujer",
-              distrito: dataDistrito[element.id_distrito-1].nombre_distrito,
-              usuario: dataUsuario.find((e) => e.id_usuario === element.id_usuario).nombre_usuario,
-              estadocivil: dataEstadoCivil[element.id_estadocivil-1].tipo_de_estado,
-              niveleducativo: dataNivelEducativo[element.id_niveleducativo-1].nivel_educativo,
-              salario: element.salario,
-              deudas: element.deudas,
-              motivo: dataMotivo[element.id_motivo-1].motivo,
-            });
-            clientstoExport.push(client);
-            console.log(client)
-          });
-          console.log(clientstoExport);
-          setClientesExport(clientstoExport);
-      const csvData = Papa.unparse(clientstoExport);
-      const blob = new Blob([csvData], { type: 'text/csv' });
+    
+      let clientsText = '';
+      clientsText += 'nombre_cliente,dni,fecha_nacimiento,cantidad_propiedades,cantidad_hijos,genero,distrito,estadocivil,niveleducativo,salario,deudas,motivo\n';
+      
+      clientes.forEach(element => {
+        const fecha = new Date(element.fecha_nacimiento);
+        const anio = fecha.getFullYear();
+        let mes = fecha.getMonth() + 1 < 10 ? '0' + (fecha.getMonth() + 1) : fecha.getMonth() + 1;
+        let dia = fecha.getDate() < 10 ? '0' + fecha.getDate() : fecha.getDate();
+    
+        const client = `
+          ${element.nombre_cliente},${element.dni},${dia}/${mes}/${anio},${element.cantidad_propiedades},${element.cantidad_hijos},${element.genero ? 'Mujer' : 'Hombre'},${dataDistrito[element.id_distrito - 1].nombre_distrito},${dataEstadoCivil[element.id_estadocivil - 1].tipo_de_estado},${dataNivelEducativo[element.id_niveleducativo - 1].nivel_educativo},${element.salario},${element.deudas},${dataMotivo[element.id_motivo - 1].motivo}
+        `;
+        clientsText += client.trim() + '\n';
+      });
+    
+      setClientesExport(clientsText);
+    
+      const blob = new Blob([clientsText], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = 'data.csv';
+      a.download = 'data.txt';
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-    }
+    };
+    
 
     function calcularEdad(fechaNacimiento) {
       const fechaNacimientoArray = fechaNacimiento.split('-');
@@ -496,7 +484,7 @@ console.log('Distrito encontrado:', distritoEncontrado, motivoEncontrado);
       
       // Verifica si el valor del PBI es vacío
       if (newValue.trim() === "") {
-          setAlert("El valor del PBI no puede estar vacío. Por favor, ingresa un valor válido.");
+          setAlert("Rellenar PBI");
           setOpen(true);
           return; // Detiene la ejecución de la función si el valor es vacío
       }
