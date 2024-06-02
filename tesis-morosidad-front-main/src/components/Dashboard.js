@@ -212,7 +212,7 @@ export default function Dashboard(){
               'value',
           ]}
           indexBy="label"
-          margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+          margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
           padding={0.3}
           valueScale={{ type: 'linear' }}
           indexScale={{ type: 'band', round: true }}
@@ -251,10 +251,7 @@ export default function Dashboard(){
           axisBottom={{
               tickSize: 5,
               tickPadding: 5,
-              tickRotation: 0,
-              legend: 'Distritos',
-              legendPosition: 'middle',
-              legendOffset: 32
+              tickRotation: -23,
           }}
           axisLeft={{
               tickSize: 5,
@@ -288,7 +285,7 @@ export default function Dashboard(){
               'value',
           ]}
           indexBy="label"
-          margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+          margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
           padding={0.3}
           valueScale={{ type: 'linear' }}
           indexScale={{ type: 'band', round: true }}
@@ -327,10 +324,7 @@ export default function Dashboard(){
           axisBottom={{
               tickSize: 5,
               tickPadding: 5,
-              tickRotation: 0,
-              legend: 'Regiones',
-              legendPosition: 'middle',
-              legendOffset: 32
+              tickRotation: -23,
           }}
           axisLeft={{
               tickSize: 5,
@@ -605,6 +599,7 @@ export default function Dashboard(){
         }, 2000); // 3000 milisegundos = 3 segundos
       
       setRegion(dataRegion[ident-1].nombre_region);
+      if(distrito!=null) {setDistrito("");}
       localStorage.setItem("region", dataRegion[ident-1].nombre_region);
 
       const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + '/distritosporregion/' + ident+ "/"+userId);
@@ -761,7 +756,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
       }
     }
     const morosos = () => {
-      if (!Array.isArray(clientes)) {
+      if (!Array.isArray(clientes) || clientes.length===0) {
         return "No hay datos";
       }
     
@@ -801,7 +796,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
   };
   
     const nomorosos = () => {
-      if (!Array.isArray(clientes)) {
+      if (!Array.isArray(clientes)|| clientes.length===0) {
         return "No hay datos";
       }
     
@@ -817,10 +812,12 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
     const filteredClients = Array.isArray(clientes) ? clientes.filter(cliente => {
       const clienteFechaNacimiento = new Date(cliente.fecha_nacimiento);
       const clienteEdad = Math.floor((new Date() - clienteFechaNacimiento) / 31557600000); // Calcula la edad en años
-      return clienteEdad < 150 && cliente.deudas > 0 && cliente.salario<5000 && cliente.cantidad_propiedades<2;
+      return clienteEdad < 150 && cliente.deudas > 0 && cliente.salario < 5000 && cliente.cantidad_propiedades < 2;
     }) : [];
     
-    
+    const top5ClientsByDeudas = filteredClients
+      .sort((a, b) => b.deudas - a.deudas) // Ordenar por deudas en orden descendente
+      .slice(0, 5); 
   
     const restablecer = () => {
       setShowComponentA(true);
@@ -853,7 +850,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
             <Grid container spacing={2} sx={{marginTop:'2rem', marginBottom:'2rem'}}>
               <Grid item xs={10}>
                 <Grid container>
-                  <Grid item xs={12} md={6} sx={{height: 400, marginBottom:'2rem'}}>
+                  <Grid item xs={12} md={6} sx={{height: 400, marginBottom:'7rem'}}>
                     <Typography variant="h6" sx={{marginBottom:'.5rem', textAlign:'center', fontWeight:'bold'}}>Región con mayor número de morosos</Typography>               
                     {showComponentA
                     ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
@@ -866,7 +863,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                       </Fragment>
                     }
                   </Grid>
-                  <Grid item xs={12} md={6} sx={{height: 400,  marginBottom:'2rem'}}>
+                  <Grid item xs={12} md={6} sx={{height: 400,  marginBottom:'7rem'}}>
                     <Typography variant="h6" sx={{marginBottom:'.5rem', textAlign:'center', fontWeight:'bold'}}>Distrito con mayor número de morosos</Typography>              
                     {showComponentA
                     ? <Typography sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '50vh',}}> <Spinner color="success"/> Cargando</Typography>
@@ -922,15 +919,15 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                           </TableRow>
                         </TableHead>
                         <TableBody>
-    {filteredClients.length > 0 ? (
-      filteredClients.map(cliente => (
-        <StyledTableRow key={cliente.id_cliente}>
-          <StyledTableCell component="th" scope="row">{cliente.dni}</StyledTableCell>
-          <StyledTableCell>{cliente.nombre_cliente}</StyledTableCell>
-          <StyledTableCell>{cliente.deudas}</StyledTableCell>
-        </StyledTableRow>
-      ))
-    ) : (
+                        {top5ClientsByDeudas.length > 0 ? (
+          top5ClientsByDeudas.map(cliente => (
+            <StyledTableRow key={cliente.id_cliente}>
+              <StyledTableCell component="th" scope="row">{cliente.dni}</StyledTableCell>
+              <StyledTableCell>{cliente.nombre_cliente}</StyledTableCell>
+              <StyledTableCell>{cliente.deudas}</StyledTableCell>
+            </StyledTableRow>
+          ))
+        ) : (
       <StyledTableRow>
         <StyledTableCell colSpan={3}>
           <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '25vh' }}>No hay datos</Typography>
