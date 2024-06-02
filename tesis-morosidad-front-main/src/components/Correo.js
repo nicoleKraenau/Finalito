@@ -69,8 +69,8 @@ export default function Correo(){
                 return;
               } else if (contrasena === repcontrasena) {
                   // Verificar longitud de la contraseña
-                  if (contrasena.length < 8) {
-                      setAlert('La contraseña debe tener al menos 8 caracteres.');
+                  if (contrasena.length < 9) {
+                      setAlert('La contraseña debe tener al menos 9 caracteres.');
                       handleOpen();
                       return;
                   }

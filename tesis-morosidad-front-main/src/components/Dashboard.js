@@ -212,7 +212,7 @@ export default function Dashboard(){
               'value',
           ]}
           indexBy="label"
-          margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+          margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
           padding={0.3}
           valueScale={{ type: 'linear' }}
           indexScale={{ type: 'band', round: true }}
@@ -251,7 +251,7 @@ export default function Dashboard(){
           axisBottom={{
               tickSize: 5,
               tickPadding: 5,
-              tickRotation: -45,
+              tickRotation: -23,
           }}
           axisLeft={{
               tickSize: 5,
@@ -285,7 +285,7 @@ export default function Dashboard(){
               'value',
           ]}
           indexBy="label"
-          margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+          margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
           padding={0.3}
           valueScale={{ type: 'linear' }}
           indexScale={{ type: 'band', round: true }}
@@ -324,7 +324,7 @@ export default function Dashboard(){
           axisBottom={{
               tickSize: 5,
               tickPadding: 5,
-              tickRotation: 0,
+              tickRotation: -23,
           }}
           axisLeft={{
               tickSize: 5,
@@ -599,6 +599,7 @@ export default function Dashboard(){
         }, 2000); // 3000 milisegundos = 3 segundos
       
       setRegion(dataRegion[ident-1].nombre_region);
+      if(distrito!=null) {setDistrito("");}
       localStorage.setItem("region", dataRegion[ident-1].nombre_region);
 
       const responseDistritobyRegion = await fetch(process.env.REACT_APP_API_URL + '/distritosporregion/' + ident+ "/"+userId);
@@ -755,7 +756,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
       }
     }
     const morosos = () => {
-      if (!Array.isArray(clientes)) {
+      if (!Array.isArray(clientes) || clientes.length===0) {
         return "No hay datos";
       }
     
@@ -795,7 +796,7 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
   };
   
     const nomorosos = () => {
-      if (!Array.isArray(clientes)) {
+      if (!Array.isArray(clientes)|| clientes.length===0) {
         return "No hay datos";
       }
     

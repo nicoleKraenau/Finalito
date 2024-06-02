@@ -314,7 +314,7 @@ export default function NuevoCliente() {
       setAlert("El campo 'Nivel Educativo' no está seleccionado. Intente de nuevo.");
       handleOpen();
     } else if (task.fecha_nacimiento=="") {
-      setAlert("El campo 'Fecha de Nacimiento' no está seleccionado. Intente de nuevo.");
+      setAlert("El campo 'Fecha de Nacimiento' está vacío. Intente de nuevo.");
       handleOpen();
     } else if (task.genero==null) {
       setAlert("El campo 'Genero' no está seleccionado. Intente de nuevo.");
@@ -416,7 +416,7 @@ export default function NuevoCliente() {
       setAlert("El campo 'Nivel Educativo' no está seleccionado. Intente de nuevo.");
       handleOpen();
     } else if (task.fecha_nacimiento=="") {
-      setAlert("El campo 'Fecha de Nacimiento' no está seleccionado. Intente de nuevo.");
+      setAlert("El campo 'Fecha de Nacimiento' está vacío. Intente de nuevo.");
       handleOpen();
     } else if (task.genero==null) {
       setAlert("El campo 'Genero' no está seleccionado. Intente de nuevo.");
