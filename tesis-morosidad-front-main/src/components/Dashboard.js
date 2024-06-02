@@ -811,10 +811,12 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
     const filteredClients = Array.isArray(clientes) ? clientes.filter(cliente => {
       const clienteFechaNacimiento = new Date(cliente.fecha_nacimiento);
       const clienteEdad = Math.floor((new Date() - clienteFechaNacimiento) / 31557600000); // Calcula la edad en años
-      return clienteEdad < 150 && cliente.deudas > 0 && cliente.salario<5000 && cliente.cantidad_propiedades<2;
+      return clienteEdad < 150 && cliente.deudas > 0 && cliente.salario < 5000 && cliente.cantidad_propiedades < 2;
     }) : [];
     
-    
+    const top5ClientsByDeudas = filteredClients
+      .sort((a, b) => b.deudas - a.deudas) // Ordenar por deudas en orden descendente
+      .slice(0, 5); 
   
     const restablecer = () => {
       setShowComponentA(true);
@@ -916,15 +918,15 @@ console.log(filteredData4,'tttttttttttttttttttttttt')
                           </TableRow>
                         </TableHead>
                         <TableBody>
-    {filteredClients.length > 0 ? (
-      filteredClients.map(cliente => (
-        <StyledTableRow key={cliente.id_cliente}>
-          <StyledTableCell component="th" scope="row">{cliente.dni}</StyledTableCell>
-          <StyledTableCell>{cliente.nombre_cliente}</StyledTableCell>
-          <StyledTableCell>{cliente.deudas}</StyledTableCell>
-        </StyledTableRow>
-      ))
-    ) : (
+                        {top5ClientsByDeudas.length > 0 ? (
+          top5ClientsByDeudas.map(cliente => (
+            <StyledTableRow key={cliente.id_cliente}>
+              <StyledTableCell component="th" scope="row">{cliente.dni}</StyledTableCell>
+              <StyledTableCell>{cliente.nombre_cliente}</StyledTableCell>
+              <StyledTableCell>{cliente.deudas}</StyledTableCell>
+            </StyledTableRow>
+          ))
+        ) : (
       <StyledTableRow>
         <StyledTableCell colSpan={3}>
           <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '25vh' }}>No hay datos</Typography>
